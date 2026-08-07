@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workout history — Stride</title>
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="topnav">
+    <a href="/dashboard" class="brand">Stride</a>
+    <a href="/dashboard" class="navlink">&larr; Dashboard</a>
+  </div>
+
+  <div class="history-body">
+    <h1 class="history-title">Workout history</h1>
+    <p class="history-sub" id="history-sub">Loading…</p>
+
+    <div class="history-grid">
+      <div class="workout-list" id="workout-list"></div>
+
+      <div class="detail-card" id="detail-card" style="display:none;">
+        <div class="detail-header">
+          <div>
+            <div class="detail-date" id="detail-date"></div>
+            <div class="detail-title" id="detail-title"></div>
+          </div>
+          <div>
+            <div class="detail-duration" id="detail-duration"></div>
+            <div class="detail-duration-label">duration</div>
+          </div>
+        </div>
+
+        <div class="detail-stats">
+          <div>
+            <div class="detail-stat-label">Reps &amp; sets</div>
+            <div class="detail-stat-val" id="detail-reps"></div>
+          </div>
+          <div>
+            <div class="detail-stat-label">Weight</div>
+            <div class="detail-stat-val" id="detail-weight"></div>
+          </div>
+          <div>
+            <div class="detail-stat-label">Distance</div>
+            <div class="detail-stat-val" id="detail-distance"></div>
+          </div>
+          <div>
+            <div class="detail-stat-label">Effort (RPE)</div>
+            <div class="detail-stat-val" id="detail-rpe"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="detail-notes-label">Notes</div>
+          <p class="detail-notes" id="detail-notes"></p>
+        </div>
+      </div>
+
+      <div class="cal-card">
+        <div class="cal-header">
+          <button class="cal-nav-btn" id="cal-prev">&lsaquo;</button>
+          <div class="cal-month-label" id="cal-month-label"></div>
+          <button class="cal-nav-btn" id="cal-next">&rsaquo;</button>
+        </div>
+        <div class="cal-weekdays">
+          <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-sameday" id="cal-sameday" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/history.js"></script>
+</body>
+</html>

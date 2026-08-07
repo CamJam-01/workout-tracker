@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — Stride</title>
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="topnav">
+    <a href="/" class="brand">Stride</a>
+    <a href="/history" class="navlink">History</a>
+    <div class="date" id="today-label"></div>
+    <a href="#" class="navlink" id="logout-link">Log out</a>
+    <div class="avatar" id="avatar">?</div>
+  </div>
+
+  <!-- DASHBOARD VIEW -->
+  <div class="dash-body" id="view-dashboard">
+
+    <div class="stopwatch-card">
+      <div style="display:flex;align-items:baseline;gap:6px;">
+        <div class="stopwatch-time" id="stopwatch-time">00:00.00</div>
+      </div>
+      <div class="stopwatch-status" id="stopwatch-status">Ready when you are</div>
+
+      <div class="stopwatch-controls">
+        <button class="lap-btn" id="lap-btn" disabled>Lap</button>
+        <button class="toggle-btn stopped" id="toggle-btn" aria-label="Start workout">
+          <div class="icon-play" id="toggle-icon"></div>
+        </button>
+        <div class="spacer76"></div>
+      </div>
+
+      <div class="laps-row" id="laps-row" style="display:none;"></div>
+    </div>
+
+    <div class="highlight-card">
+      <div class="highlight-icon"><div class="highlight-dot"></div></div>
+      <div class="highlight-body">
+        <div class="highlight-kicker" id="highlight-kicker">Did you know</div>
+        <div class="highlight-text" id="highlight-text"></div>
+      </div>
+      <div class="highlight-edit-row" id="highlight-edit-row" style="display:none;">
+        <input class="highlight-input" id="highlight-input" placeholder="Your goal or quote">
+        <button class="highlight-save" id="highlight-save">Save</button>
+      </div>
+      <button class="highlight-edit-btn" id="highlight-edit-btn">Set your own</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-kicker">All-time</div>
+        <div class="stat-row">
+          <div>
+            <div class="stat-num" id="stat-total-workouts">0</div>
+            <div class="stat-label">workouts</div>
+          </div>
+          <div>
+            <div class="stat-num" id="stat-total-time">0m</div>
+            <div class="stat-label">total time</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-kicker">This week</div>
+        <div class="week-bars" id="week-bars"></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-kicker">Personal records</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="pr-row"><span class="pr-label">Max weight</span><span class="pr-val" id="pr-max-weight">—</span></div>
+          <div class="pr-row"><span class="pr-label">Longest workout</span><span class="pr-val" id="pr-longest">—</span></div>
+          <div class="pr-row"><span class="pr-label">Best week</span><span class="pr-val" id="pr-best-week">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST-WORKOUT ENTRY VIEW -->
+  <div class="entry-wrap" id="view-entry" style="display:none;">
+    <div>
+      <div class="entry-kicker">Workout logged</div>
+      <div class="entry-title">How did that go?</div>
+      <div class="entry-summary" id="entry-summary"></div>
+    </div>
+
+    <div class="entry-layout">
+      <div class="entry-pages" id="entry-pages" style="display:none;"></div>
+
+      <div class="entry-form">
+        <div class="entry-form-header" id="entry-form-header" style="display:none;"></div>
+
+        <div class="entry-field">
+          <label for="f-exercise">Exercise / machine</label>
+          <input id="f-exercise" placeholder="e.g. Treadmill, Bench press">
+        </div>
+
+        <div class="entry-row">
+          <div class="entry-field">
+            <label for="f-reps">Reps &amp; sets</label>
+            <input id="f-reps" placeholder="e.g. 3x12">
+          </div>
+          <div class="entry-field">
+            <label for="f-weight">Weight</label>
+            <input id="f-weight" placeholder="e.g. 135 lbs">
+          </div>
+        </div>
+
+        <div class="entry-field">
+          <label for="f-distance">Distance</label>
+          <input id="f-distance" placeholder="e.g. 2.4 mi">
+        </div>
+
+        <div class="entry-field">
+          <label for="f-rpe">Effort (RPE <span id="f-rpe-val">5</span>/10)</label>
+          <input id="f-rpe" type="range" min="1" max="10" value="5">
+        </div>
+
+        <div class="entry-field">
+          <label for="f-notes">Notes</label>
+          <textarea id="f-notes" placeholder="How did it feel?"></textarea>
+        </div>
+
+        <div class="entry-actions">
+          <button class="entry-discard" id="entry-discard">Discard</button>
+          <button class="entry-save" id="entry-save">Save workout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="/js/dashboard.js"></script>
+</body>
+</html>

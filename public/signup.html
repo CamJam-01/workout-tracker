@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create your account — Stride</title>
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="page" style="display:flex;flex-direction:column;">
+  <div class="auth-topbar"><a href="landing.html" class="brand">Stride</a></div>
+
+  <div class="auth-wrap">
+    <div class="auth-col">
+      <div>
+        <h1>Create your account</h1>
+        <p class="lead">Start tracking in under a minute.</p>
+      </div>
+
+      <form class="auth-card" id="signup-form" novalidate>
+        <p class="auth-error" id="signup-error"></p>
+        <div class="field">
+          <label for="name">Name</label>
+          <input class="input" type="text" id="name" name="name" placeholder="Jordan Lee" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input class="input" type="email" id="email" name="email" placeholder="you@example.com" required>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input class="input" type="password" id="password" name="password" placeholder="At least 8 characters" required minlength="8">
+        </div>
+        <button class="auth-submit" type="submit" id="signup-submit">Create account</button>
+      </form>
+
+      <p class="auth-foot">Already have an account? <a href="login.html">Log in</a></p>
+    </div>
+  </div>
+</div>
+<script src="js/auth.js"></script>
+</body>
+</html>
