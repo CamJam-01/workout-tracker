@@ -126,6 +126,7 @@
   }
 
   function renderStopwatch() {
+    const hasRecordedTime = state.running || state.elapsedMs > 0 || state.laps.length > 0;
     el("stopwatch-time").textContent = formatClock(state.elapsedMs);
     el("stopwatch-status").textContent = state.running
       ? "Recording"
@@ -133,9 +134,12 @@
       ? "Paused"
       : "Ready when you are";
     const toggleBtn = el("toggle-btn");
-    toggleBtn.className = "toggle-btn " + (state.running ? "running" : "stopped");
-    toggleBtn.setAttribute("aria-label", state.running ? "Stop workout" : "Start workout");
-    el("toggle-icon").className = state.running ? "icon-stop" : "icon-play";
+    toggleBtn.setAttribute(
+      "aria-label",
+      state.running ? "Pause workout" : hasRecordedTime ? "Resume workout" : "Start workout"
+    );
+    el("toggle-icon").className = state.running ? "icon-pause" : "icon-play";
+    el("stop-btn").disabled = !hasRecordedTime;
     el("lap-btn").disabled = !state.running;
     el("lap-btn").style.opacity = state.running ? 1 : 0.45;
 
@@ -160,23 +164,30 @@
     renderStopwatch();
   }
 
-  function handleToggle() {
+  function handlePlayPause() {
     if (!state.running) {
       state.startTs = Date.now() - state.elapsedMs;
       state.tickInterval = setInterval(tick, 50);
       state.running = true;
-      renderStopwatch();
     } else {
       clearInterval(state.tickInterval);
-      const priorLaps = state.laps;
-      const finalLabel = priorLaps.length === 0 ? "Workout" : "Lap " + (priorLaps.length + 1);
-      const finalSegment = { label: finalLabel, display: formatLap(state.elapsedMs), ms: state.elapsedMs };
-      state.segments = [...priorLaps, finalSegment];
-      state.forms = state.segments.map(() => ({ exercise: "", reps: "", weight: "", distance: "", notes: "", rpe: 5, routineId: "" }));
-      state.activePage = 0;
       state.running = false;
-      enterEntryView();
     }
+    renderStopwatch();
+  }
+
+  function handleStop() {
+    const hasRecordedTime = state.running || state.elapsedMs > 0 || state.laps.length > 0;
+    if (!hasRecordedTime) return;
+    if (state.running) clearInterval(state.tickInterval);
+    const priorLaps = state.laps;
+    const finalLabel = priorLaps.length === 0 ? "Workout" : "Lap " + (priorLaps.length + 1);
+    const finalSegment = { label: finalLabel, display: formatLap(state.elapsedMs), ms: state.elapsedMs };
+    state.segments = [...priorLaps, finalSegment];
+    state.forms = state.segments.map(() => ({ exercise: "", reps: "", weight: "", distance: "", notes: "", rpe: 5, routineId: "" }));
+    state.activePage = 0;
+    state.running = false;
+    enterEntryView();
   }
 
   function handleLap() {
@@ -386,7 +397,8 @@
   }
 
   function wireEvents() {
-    el("toggle-btn").addEventListener("click", handleToggle);
+    el("toggle-btn").addEventListener("click", handlePlayPause);
+    el("stop-btn").addEventListener("click", handleStop);
     el("lap-btn").addEventListener("click", handleLap);
     el("entry-discard").addEventListener("click", handleDiscard);
     el("entry-save").addEventListener("click", handleSaveWorkout);
