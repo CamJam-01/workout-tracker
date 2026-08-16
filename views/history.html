@@ -12,6 +12,7 @@
 
   <div class="topnav">
     <a href="/dashboard" class="brand">Stride</a>
+    <a href="/routines" class="navlink">Routines</a>
     <a href="/dashboard" class="navlink">&larr; Dashboard</a>
   </div>
 
@@ -34,6 +35,10 @@
           </div>
         </div>
 
+        <button type="button" class="detail-edit-btn" id="detail-edit-btn" aria-label="Edit workout">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
+        </button>
+
         <div class="detail-stats">
           <div>
             <div class="detail-stat-label">Reps &amp; sets</div>
@@ -53,6 +58,11 @@
           </div>
         </div>
 
+        <div id="detail-splits" style="display:none;">
+          <div class="detail-stat-label">Splits</div>
+          <div class="laps-row" id="detail-splits-row" style="display:flex;"></div>
+        </div>
+
         <div>
           <div class="detail-notes-label">Notes</div>
           <p class="detail-notes" id="detail-notes"></p>
@@ -69,7 +79,111 @@
           <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
         </div>
         <div class="cal-grid" id="cal-grid"></div>
+        <button type="button" class="cal-add-btn" id="cal-add-btn">+ Add workout</button>
         <div class="cal-sameday" id="cal-sameday" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="workout-add-modal" style="display:none;">
+    <div class="modal-card">
+      <div>
+        <div class="modal-title">Add workout</div>
+        <div class="modal-sub" id="add-date-label"></div>
+      </div>
+
+      <div class="entry-field">
+        <label for="add-title">Title</label>
+        <input id="add-title" placeholder="e.g. Evening run">
+      </div>
+      <div class="entry-row">
+        <div class="entry-field">
+          <label for="add-duration">Duration</label>
+          <input id="add-duration" placeholder="mm:ss">
+        </div>
+        <div class="entry-field">
+          <label for="add-rpe">Effort (RPE)</label>
+          <input id="add-rpe" type="number" min="1" max="10">
+        </div>
+      </div>
+      <div class="entry-row">
+        <div class="entry-field">
+          <label for="add-reps">Reps &amp; sets</label>
+          <input id="add-reps" placeholder="e.g. 3x12">
+        </div>
+        <div class="entry-field">
+          <label for="add-weight">Weight</label>
+          <input id="add-weight" placeholder="e.g. 135 lbs">
+        </div>
+      </div>
+      <div class="entry-field">
+        <label for="add-distance">Distance</label>
+        <input id="add-distance" placeholder="e.g. 2.4 mi">
+      </div>
+      <div class="entry-field">
+        <label for="add-notes">Notes</label>
+        <textarea id="add-notes" placeholder="How did it feel?"></textarea>
+      </div>
+
+      <div class="entry-field">
+        <label>Splits</label>
+        <div class="splits-editor" id="add-splits-list"></div>
+        <button type="button" class="splits-add-btn" id="add-split-btn">+ Add split</button>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="modal-cancel-btn" id="add-cancel">Cancel</button>
+        <button type="button" class="modal-save-btn" id="add-save">Add workout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="workout-edit-modal" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-title">Edit workout</div>
+
+      <div class="entry-field">
+        <label for="edit-title">Title</label>
+        <input id="edit-title">
+      </div>
+      <div class="entry-row">
+        <div class="entry-field">
+          <label for="edit-duration">Duration</label>
+          <input id="edit-duration">
+        </div>
+        <div class="entry-field">
+          <label for="edit-rpe">Effort (RPE)</label>
+          <input id="edit-rpe" type="number" min="1" max="10">
+        </div>
+      </div>
+      <div class="entry-row">
+        <div class="entry-field">
+          <label for="edit-reps">Reps &amp; sets</label>
+          <input id="edit-reps">
+        </div>
+        <div class="entry-field">
+          <label for="edit-weight">Weight</label>
+          <input id="edit-weight">
+        </div>
+      </div>
+      <div class="entry-field">
+        <label for="edit-distance">Distance</label>
+        <input id="edit-distance">
+      </div>
+      <div class="entry-field">
+        <label for="edit-notes">Notes</label>
+        <textarea id="edit-notes"></textarea>
+      </div>
+
+      <div class="entry-field">
+        <label>Splits</label>
+        <div class="splits-editor" id="edit-splits-list"></div>
+        <button type="button" class="splits-add-btn" id="edit-split-btn">+ Add split</button>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="modal-cancel-btn" id="edit-cancel">Cancel</button>
+        <button type="button" class="modal-save-btn" id="edit-save">Save</button>
       </div>
     </div>
   </div>

@@ -40,9 +40,25 @@ const SCHEMA_SQL = `
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
-    highlight_text TEXT,
+    highlight_texts JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );
+
+  -- One-time migration for schemas created before highlight_texts existed:
+  -- carries the old single string forward as a one-item array, then drops it.
+  -- No-op forever after (and on fresh deploys, which never had highlight_text).
+  DO $$
+  BEGIN
+    IF EXISTS (
+      SELECT 1 FROM information_schema.columns
+      WHERE table_name = 'users' AND column_name = 'highlight_text'
+    ) THEN
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS highlight_texts JSONB;
+      UPDATE users SET highlight_texts = to_jsonb(ARRAY[highlight_text])
+        WHERE highlight_texts IS NULL AND highlight_text IS NOT NULL AND highlight_text <> '';
+      ALTER TABLE users DROP COLUMN highlight_text;
+    END IF;
+  END $$;
 
   CREATE TABLE IF NOT EXISTS workouts (
     id SERIAL PRIMARY KEY,
@@ -60,6 +76,21 @@ const SCHEMA_SQL = `
 
   CREATE INDEX IF NOT EXISTS idx_workouts_user ON workouts(user_id);
   CREATE INDEX IF NOT EXISTS idx_workouts_user_date ON workouts(user_id, iso_date);
+
+  CREATE TABLE IF NOT EXISTS routines (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    exercise TEXT,
+    reps TEXT,
+    weight TEXT,
+    distance TEXT,
+    rpe INTEGER,
+    notes TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_routines_user ON routines(user_id);
 `;
 
 // Serverless cold starts each get a fresh module instance, so this promise

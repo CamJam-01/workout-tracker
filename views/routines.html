@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Routines — Stride</title>
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div class="page">
+
+  <div class="topnav">
+    <a href="/dashboard" class="brand">Stride</a>
+    <a href="/dashboard" class="navlink">Dashboard</a>
+    <a href="/history" class="navlink">History</a>
+    <a href="/routines" class="navlink" aria-current="page">Routines</a>
+  </div>
+
+  <div class="routines-body">
+    <div class="routines-header">
+      <div>
+        <h1 class="routines-title">Routines</h1>
+        <p class="routines-sub">Save workout templates to auto-fill your log in one tap.</p>
+      </div>
+      <button type="button" class="routines-new-btn" id="new-routine-btn">+ New routine</button>
+    </div>
+
+    <div class="routines-grid" id="routines-grid"></div>
+    <div class="empty-note" id="routines-empty" style="display:none;">No routines yet. Create one to speed up logging your workouts.</div>
+  </div>
+
+  <div class="modal-overlay" id="routine-modal" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-title" id="routine-modal-title">New routine</div>
+
+      <div class="entry-field">
+        <label for="routine-name">Routine name</label>
+        <input id="routine-name" type="text" placeholder="e.g. Push day">
+      </div>
+      <div class="entry-field">
+        <label for="routine-exercise">Exercise / machine</label>
+        <input id="routine-exercise" type="text" placeholder="e.g. Bench press">
+      </div>
+      <div class="entry-row">
+        <div class="entry-field">
+          <label for="routine-reps">Reps &amp; sets</label>
+          <input id="routine-reps" type="text" placeholder="e.g. 4x10">
+        </div>
+        <div class="entry-field">
+          <label for="routine-weight">Weight</label>
+          <input id="routine-weight" type="text" placeholder="e.g. 135 lbs">
+        </div>
+      </div>
+      <div class="entry-field">
+        <label for="routine-distance">Distance</label>
+        <input id="routine-distance" type="text" placeholder="e.g. 2.4 mi">
+      </div>
+      <div class="entry-field">
+        <label for="routine-rpe">Effort (RPE <span id="routine-rpe-val">5</span>/10)</label>
+        <input id="routine-rpe" type="range" min="1" max="10" value="5">
+      </div>
+      <div class="entry-field">
+        <label for="routine-notes">Notes</label>
+        <textarea id="routine-notes" placeholder="Cues, target machine, etc."></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="modal-cancel-btn" id="routine-cancel">Cancel</button>
+        <button type="button" class="modal-save-btn" id="routine-save">Save routine</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/routines.js"></script>
+</body>
+</html>

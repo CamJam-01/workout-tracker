@@ -14,7 +14,7 @@ function publicUser(u) {
     id: u.id,
     name: u.name,
     email: u.email,
-    highlightText: u.highlight_text || null,
+    highlightTexts: Array.isArray(u.highlight_texts) ? u.highlight_texts : [],
   };
 }
 
@@ -76,6 +76,24 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
+router.post("/forgot-password", async (req, res, next) => {
+  try {
+    const { email } = req.body || {};
+    if (email) {
+      // Look up the account, but never let the response reveal whether it exists.
+      await pool.query("SELECT id FROM users WHERE email = $1", [
+        String(email).trim().toLowerCase(),
+      ]);
+    }
+    res.json({
+      ok: true,
+      message: "If an account exists for that email, we've sent a reset link.",
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post("/logout", (req, res) => {
   clearAuthCookie(res);
   res.json({ ok: true });
@@ -99,13 +117,13 @@ router.get("/me", requireAuth, async (req, res, next) => {
 
 router.put("/me", requireAuth, async (req, res, next) => {
   try {
-    const { highlightText } = req.body || {};
-    const value =
-      highlightText && String(highlightText).trim()
-        ? String(highlightText).trim()
-        : null;
+    const { highlightTexts } = req.body || {};
+    const cleaned = Array.isArray(highlightTexts)
+      ? highlightTexts.map((t) => String(t).trim()).filter(Boolean).slice(0, 20)
+      : [];
+    const value = cleaned.length ? JSON.stringify(cleaned) : null;
     const result = await pool.query(
-      "UPDATE users SET highlight_text = $1 WHERE id = $2 RETURNING *",
+      "UPDATE users SET highlight_texts = $1::jsonb WHERE id = $2 RETURNING *",
       [value, req.userId]
     );
     res.json({ user: publicUser(result.rows[0]) });

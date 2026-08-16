@@ -12,6 +12,7 @@
 
   <div class="topnav">
     <a href="/" class="brand">Stride</a>
+    <a href="/routines" class="navlink">Routines</a>
     <a href="/history" class="navlink">History</a>
     <div class="date" id="today-label"></div>
     <a href="#" class="navlink" id="logout-link">Log out</a>
@@ -44,11 +45,7 @@
         <div class="highlight-kicker" id="highlight-kicker">Did you know</div>
         <div class="highlight-text" id="highlight-text"></div>
       </div>
-      <div class="highlight-edit-row" id="highlight-edit-row" style="display:none;">
-        <input class="highlight-input" id="highlight-input" placeholder="Your goal or quote">
-        <button class="highlight-save" id="highlight-save">Save</button>
-      </div>
-      <button class="highlight-edit-btn" id="highlight-edit-btn">Set your own</button>
+      <button class="highlight-edit-btn" id="highlight-edit-btn">Edit</button>
     </div>
 
     <div class="stats-grid">
@@ -96,6 +93,13 @@
       <div class="entry-form">
         <div class="entry-form-header" id="entry-form-header" style="display:none;"></div>
 
+        <div class="entry-field" id="f-routine-field" style="display:none;">
+          <label for="f-routine">Load from a routine</label>
+          <select id="f-routine">
+            <option value="">Choose a routine…</option>
+          </select>
+        </div>
+
         <div class="entry-field">
           <label for="f-exercise">Exercise / machine</label>
           <input id="f-exercise" placeholder="e.g. Treadmill, Bench press">
@@ -131,6 +135,19 @@
           <button class="entry-discard" id="entry-discard">Discard</button>
           <button class="entry-save" id="entry-save">Save workout</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="factoids-modal" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-title">Edit your factoids</div>
+      <div class="modal-sub">These rotate on your dashboard highlight card.</div>
+      <div class="factoids-list" id="factoids-list"></div>
+      <button type="button" class="factoid-add-btn" id="factoid-add-btn">+ Add another</button>
+      <div class="modal-actions">
+        <button type="button" class="modal-cancel-btn" id="factoids-cancel">Cancel</button>
+        <button type="button" class="modal-save-btn" id="factoids-save">Save</button>
       </div>
     </div>
   </div>

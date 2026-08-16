@@ -65,6 +65,13 @@ a:hover { color: var(--color-accent-700); }
 .auth-foot { text-align: center; font-size: 13px; color: color-mix(in srgb, var(--color-text) 60%, transparent); margin: 0; }
 .auth-foot a { text-decoration: none; font-weight: 600; }
 .auth-error { font-size: 13px; color: #b00020; margin: 0; min-height: 1em; }
+.field-with-toggle { position: relative; }
+.field-with-toggle input { padding-right: 44px; }
+.password-toggle-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); cursor: pointer; background: transparent; border: none; padding: 6px; font-size: 12px; font-family: var(--font-heading); color: color-mix(in srgb, var(--color-text) 60%, transparent); }
+.reset-trigger-btn { cursor: pointer; background: transparent; border: none; padding: 0; text-align: center; font-size: 13px; color: color-mix(in srgb, var(--color-text) 65%, transparent); text-decoration: underline; }
+.reset-status { font-size: 13px; margin: 0; min-height: 1em; }
+.reset-status.success { color: var(--color-accent-2-600); }
+.reset-status.error { color: #c1483a; }
 
 /* ---- dashboard: stopwatch ---- */
 .dash-body { padding: 0 35px 44px; display: flex; flex-direction: column; gap: 26.4px; }
@@ -102,10 +109,13 @@ a:hover { color: var(--color-accent-700); }
 .highlight-body { flex: 1; min-width: 0; }
 .highlight-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent-2-600); margin-bottom: 4px; }
 .highlight-text { font-family: var(--font-heading); font-size: 19px; line-height: 1.3; animation: fadeIn 0.5s ease; }
-.highlight-edit-row { display: flex; gap: 8px; flex: none; }
-.highlight-input { min-height: 36px; padding: 6px 14px; font-size: 14px; background: var(--color-bg); border: 1px solid var(--color-divider); border-radius: 999px; width: 220px; }
-.highlight-save { cursor: pointer; font-family: var(--font-heading); font-size: 13px; background: var(--color-accent); color: var(--color-bg); border: none; padding: 8px 18px; border-radius: 999px; }
 .highlight-edit-btn { cursor: pointer; font-family: var(--font-heading); font-size: 13px; color: var(--color-accent); background: transparent; border: none; padding: 8px 6px; flex: none; }
+
+.factoids-list { display: flex; flex-direction: column; gap: 8px; }
+.factoid-row { display: flex; gap: 8px; align-items: flex-start; }
+.factoid-row textarea { flex: 1; min-height: 56px; padding: 8px 14px; font-size: 13px; background: var(--color-bg); border: 1px solid var(--color-divider); border-radius: 16px; resize: vertical; font-family: inherit; box-sizing: border-box; }
+.factoid-remove-btn { cursor: pointer; flex: none; width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--color-divider); background: transparent; color: var(--color-text); font-size: 14px; margin-top: 4px; }
+.factoid-add-btn { cursor: pointer; align-self: flex-start; font-family: var(--font-heading); font-size: 13px; color: var(--color-accent); background: transparent; border: none; padding: 4px 0; }
 
 /* ---- dashboard: stats ---- */
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px; }
@@ -136,7 +146,7 @@ a:hover { color: var(--color-accent-700); }
 .entry-form-header { font-family: var(--font-heading); font-size: 16px; }
 .entry-form-header .dur { font-size: 13px; font-weight: 400; color: color-mix(in srgb, var(--color-text) 55%, transparent); font-variant-numeric: tabular-nums; }
 .entry-field label { display: block; font-size: 12px; margin-bottom: 5px; color: color-mix(in srgb, var(--color-text) 70%, transparent); }
-.entry-field input, .entry-field textarea { width: 100%; padding: 6px 14px; font-size: 14px; background: var(--color-bg); border: 1px solid var(--color-divider); border-radius: 999px; box-sizing: border-box; font-family: inherit; }
+.entry-field input, .entry-field textarea, .entry-field select { width: 100%; padding: 6px 14px; font-size: 14px; background: var(--color-bg); border: 1px solid var(--color-divider); border-radius: 999px; box-sizing: border-box; font-family: inherit; }
 .entry-field textarea { min-height: 80px; padding: 10px 14px; border-radius: 16px; resize: vertical; }
 .entry-field input[type="range"] { accent-color: var(--color-accent); border: none; background: none; padding: 0; }
 .entry-row { display: flex; gap: 14px; }
@@ -161,7 +171,8 @@ a:hover { color: var(--color-accent-700); }
 .workout-item-meta { display: flex; gap: 10px; font-size: 12px; color: color-mix(in srgb, var(--color-text) 60%, transparent); }
 .empty-note { font-size: 13px; color: color-mix(in srgb, var(--color-text) 55%, transparent); padding: 16px 4px; }
 
-.detail-card { background: var(--color-surface); border-radius: calc(var(--radius-lg) * 1.15); padding: 32px; box-shadow: var(--shadow-md); display: flex; flex-direction: column; gap: 18px; }
+.detail-card { position: relative; background: var(--color-surface); border-radius: calc(var(--radius-lg) * 1.15); padding: 32px; box-shadow: var(--shadow-md); display: flex; flex-direction: column; gap: 18px; }
+.detail-edit-btn { cursor: pointer; position: absolute; right: 20px; bottom: 20px; width: 38px; height: 38px; border-radius: 999px; border: none; background: var(--color-accent); color: var(--color-bg); display: flex; align-items: center; justify-content: center; padding: 0; box-shadow: var(--shadow-md); }
 .detail-header { display: flex; justify-content: space-between; align-items: flex-start; }
 .detail-date { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); margin-bottom: 4px; }
 .detail-title { font-family: var(--font-heading); font-size: 24px; }
@@ -188,3 +199,41 @@ a:hover { color: var(--color-accent-700); }
 .cal-sameday-title { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 55%, transparent); }
 .cal-sameday-btn { cursor: pointer; text-align: left; border: none; background: transparent; color: var(--color-text); font-size: 12px; padding: 8px 10px; border-radius: 10px; }
 .cal-sameday-btn.selected { background: var(--color-accent-2-200); }
+.cal-add-btn { cursor: pointer; font-family: var(--font-heading); font-size: 13px; background: var(--color-accent); color: var(--color-bg); border: none; padding: 9px 14px; border-radius: 999px; }
+
+.splits-editor { display: flex; flex-direction: column; gap: 8px; }
+.splits-editor-row { display: flex; gap: 8px; align-items: center; }
+.splits-editor-row input.splits-label { flex: 1; min-height: 36px; padding: 6px 14px; font-size: 13px; background: var(--color-bg); border: 1px solid var(--color-divider); border-radius: 999px; box-sizing: border-box; }
+.splits-editor-row input.splits-time { width: 90px; flex: none; min-height: 36px; padding: 6px 14px; font-size: 13px; background: var(--color-bg); border: 1px solid var(--color-divider); border-radius: 999px; box-sizing: border-box; }
+.splits-remove-btn { cursor: pointer; flex: none; width: 32px; height: 32px; border-radius: 999px; border: 1px solid var(--color-divider); background: transparent; color: var(--color-text); font-size: 15px; }
+.splits-add-btn { cursor: pointer; margin-top: 8px; font-family: var(--font-heading); font-size: 13px; color: var(--color-accent); background: transparent; border: none; padding: 4px 0; }
+
+/* ---- shared modal system (routines, history add/edit, factoids, reset password) ---- */
+.modal-overlay { position: fixed; inset: 0; background: rgba(32,30,29,0.45); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 22px; }
+.modal-card { background: var(--color-surface); border-radius: calc(var(--radius-lg) * 1.15); box-shadow: var(--shadow-lg); width: 100%; max-width: 440px; max-height: 85vh; overflow-y: auto; padding: 26.4px; display: flex; flex-direction: column; gap: 14px; box-sizing: border-box; }
+.modal-title { font-family: var(--font-heading); font-size: 19px; }
+.modal-sub { font-size: 13px; color: color-mix(in srgb, var(--color-text) 60%, transparent); margin: -8px 0 0; }
+.modal-card .entry-field label { display: block; font-size: 12px; margin-bottom: 5px; color: color-mix(in srgb, var(--color-text) 70%, transparent); }
+.modal-card .entry-field input, .modal-card .entry-field textarea { width: 100%; padding: 6px 14px; font-size: 14px; background: var(--color-bg); border: 1px solid var(--color-divider); border-radius: 999px; box-sizing: border-box; font-family: inherit; }
+.modal-card .entry-field textarea { min-height: 70px; padding: 10px 14px; border-radius: 16px; resize: vertical; }
+.modal-card .entry-field input[type="range"] { accent-color: var(--color-accent); border: none; background: none; padding: 0; }
+.modal-card .splits-editor-row input.splits-label { width: auto; flex: 1; }
+.modal-card .splits-editor-row input.splits-time { width: 90px; flex: none; }
+.modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 6px; }
+.modal-cancel-btn { cursor: pointer; font-family: var(--font-heading); font-size: 14px; background: transparent; border: 1px solid var(--color-divider); color: var(--color-text); padding: 11px 22px; border-radius: 999px; }
+.modal-save-btn { cursor: pointer; font-family: var(--font-heading); font-size: 14px; background: var(--color-accent); color: var(--color-bg); border: none; padding: 11px 26px; border-radius: 999px; }
+
+/* ---- routines ---- */
+.routines-body { padding: 0 35px 60px; max-width: 960px; }
+.routines-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; }
+.routines-title { font-family: var(--font-heading); font-weight: 400; font-size: 28px; margin: 0 0 6px; }
+.routines-sub { font-size: 14px; color: color-mix(in srgb, var(--color-text) 60%, transparent); margin: 0; }
+.routines-new-btn { cursor: pointer; flex: none; font-family: var(--font-heading); font-size: 14px; background: var(--color-accent); color: var(--color-bg); border: none; padding: 11px 22px; border-radius: 999px; }
+.routines-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+.routine-card { background: var(--color-surface); border-radius: calc(var(--radius-lg) * 1.15); padding: 22px; box-shadow: var(--shadow-md); display: flex; flex-direction: column; gap: 10px; }
+.routine-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.routine-card-name { font-family: var(--font-heading); font-size: 17px; }
+.routine-card-actions { display: flex; gap: 6px; flex: none; }
+.routine-icon-btn { cursor: pointer; width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--color-divider); background: transparent; color: var(--color-text); display: flex; align-items: center; justify-content: center; padding: 0; font-size: 14px; }
+.routine-card-exercise { font-size: 13px; color: color-mix(in srgb, var(--color-text) 65%, transparent); }
+.routine-card-meta { display: flex; gap: 10px; font-size: 12px; color: color-mix(in srgb, var(--color-text) 55%, transparent); flex-wrap: wrap; }

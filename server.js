@@ -14,6 +14,7 @@ const { ensureSchema } = require("./src/db");
 const { getUserIdFromReq } = require("./src/middleware/auth");
 const authRoutes = require("./src/routes/auth");
 const workoutRoutes = require("./src/routes/workouts");
+const routineRoutes = require("./src/routes/routines");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +33,7 @@ app.use("/api", async (req, res, next) => {
 
 app.use("/api", authRoutes);
 app.use("/api/workouts", workoutRoutes);
+app.use("/api/routines", routineRoutes);
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -46,6 +48,7 @@ function sendProtected(page) {
 
 app.get("/dashboard", sendProtected("dashboard.html"));
 app.get("/history", sendProtected("history.html"));
+app.get("/routines", sendProtected("routines.html"));
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "landing.html"));

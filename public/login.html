@@ -26,12 +26,33 @@
         </div>
         <div class="field">
           <label for="password">Password</label>
-          <input class="input" type="password" id="password" name="password" placeholder="••••••••" required>
+          <div class="field-with-toggle">
+            <input class="input" type="password" id="password" name="password" placeholder="••••••••" required>
+            <button type="button" class="password-toggle-btn" id="toggle-password" aria-label="Show password">Show</button>
+          </div>
         </div>
         <button class="auth-submit" type="submit" id="login-submit">Log in</button>
+        <button type="button" class="reset-trigger-btn" id="open-reset-modal">Reset password</button>
       </form>
 
       <p class="auth-foot">New to Stride? <a href="signup.html">Create an account</a></p>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="reset-modal" style="display:none;">
+    <div class="modal-card" style="max-width:380px;">
+      <div>
+        <div class="modal-title">Reset your password</div>
+        <div class="modal-sub">Enter your account email and we'll send a reset link.</div>
+      </div>
+      <div class="field">
+        <input class="input" type="email" id="reset-email" placeholder="you@example.com">
+      </div>
+      <p class="reset-status" id="reset-status"></p>
+      <div class="modal-actions">
+        <button type="button" class="modal-cancel-btn" id="reset-cancel">Cancel</button>
+        <button type="button" class="modal-save-btn" id="reset-send">Send link</button>
+      </div>
     </div>
   </div>
 </div>

@@ -72,6 +72,62 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.put("/:id", async (req, res, next) => {
+  try {
+    const existing = await pool.query(
+      "SELECT * FROM workouts WHERE id = $1 AND user_id = $2",
+      [req.params.id, req.userId]
+    );
+    const current = existing.rows[0];
+    if (!current) return res.status(404).json({ error: "Workout not found" });
+
+    const b = req.body || {};
+    const title = "title" in b ? (String(b.title).trim() || "Workout") : current.title;
+    const isoDate =
+      "isoDate" in b && /^\d{4}-\d{2}-\d{2}$/.test(b.isoDate) ? b.isoDate : current.iso_date;
+    const durationMs =
+      "durationMs" in b && Number.isFinite(Number(b.durationMs))
+        ? Math.max(0, Math.round(Number(b.durationMs)))
+        : current.duration_ms;
+    const reps = "reps" in b ? (b.reps ? String(b.reps).trim() : null) : current.reps;
+    const weight = "weight" in b ? (b.weight ? String(b.weight).trim() : null) : current.weight;
+    const distance =
+      "distance" in b ? (b.distance ? String(b.distance).trim() : null) : current.distance;
+    let rpe = current.rpe;
+    if ("rpe" in b) {
+      const n = Number(b.rpe);
+      rpe = Number.isFinite(n) ? Math.min(10, Math.max(1, Math.round(n))) : null;
+    }
+    const notes = "notes" in b ? (b.notes ? String(b.notes).trim() : null) : current.notes;
+
+    const result = await pool.query(
+      `UPDATE workouts SET title = $1, iso_date = $2, duration_ms = $3, reps = $4,
+         weight = $5, distance = $6, rpe = $7, notes = $8
+       WHERE id = $9 AND user_id = $10
+       RETURNING *`,
+      [title, isoDate, durationMs, reps, weight, distance, rpe, notes, req.params.id, req.userId]
+    );
+    res.json({ workout: serialize(result.rows[0]) });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete("/:id", async (req, res, next) => {
+  try {
+    const result = await pool.query(
+      "DELETE FROM workouts WHERE id = $1 AND user_id = $2 RETURNING id",
+      [req.params.id, req.userId]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Workout not found" });
+    }
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
 function isoWeekKey(isoDate) {
   const d = new Date(isoDate + "T00:00:00");
   const day = (d.getDay() + 6) % 7; // Mon=0..Sun=6

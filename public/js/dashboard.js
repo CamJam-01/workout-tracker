@@ -1,5 +1,5 @@
 (function () {
-  const FACTOIDS = [
+  const DEFAULT_FACTOIDS = [
     "Just 30 minutes of exercise a day can boost your mood for up to 12 hours.",
     "Regular cardio lowers resting heart rate and strengthens your heart muscle.",
     "Strength training twice a week helps preserve muscle mass as you age.",
@@ -56,25 +56,73 @@
     elapsedMs: 0,
     laps: [],
     view: "dashboard",
-    quoteIdx: Math.floor(Math.random() * FACTOIDS.length),
-    customHighlight: null,
-    editingHighlight: false,
+    quoteIdx: 0,
+    factoids: DEFAULT_FACTOIDS.slice(),
+    showFactoidsModal: false,
+    draftFactoids: [],
     segments: [],
     forms: [],
     activePage: 0,
     tickInterval: null,
     quoteInterval: null,
+    routines: [],
   };
 
   const el = (id) => document.getElementById(id);
 
   function renderHighlight() {
-    el("highlight-kicker").textContent = state.customHighlight ? "Your focus" : "Did you know";
-    el("highlight-text").textContent = state.customHighlight || FACTOIDS[state.quoteIdx];
-    el("highlight-edit-btn").textContent = state.customHighlight ? "Edit" : "Set your own";
-    el("highlight-edit-btn").style.display = state.editingHighlight ? "none" : "";
-    el("highlight-edit-row").style.display = state.editingHighlight ? "flex" : "none";
-    if (state.editingHighlight) el("highlight-input").value = state.customHighlight || "";
+    el("highlight-kicker").textContent = "Did you know";
+    el("highlight-text").textContent = state.factoids[state.quoteIdx] || "";
+  }
+
+  function renderFactoidsModal() {
+    const listEl = el("factoids-list");
+    listEl.innerHTML = state.draftFactoids
+      .map(
+        (text, i) =>
+          `<div class="factoid-row">
+            <textarea data-idx="${i}" placeholder="A tip or reminder">${text.replace(/</g, "&lt;")}</textarea>
+            <button type="button" class="factoid-remove-btn" data-idx="${i}" aria-label="Remove">&times;</button>
+          </div>`
+      )
+      .join("");
+    listEl.querySelectorAll("textarea[data-idx]").forEach((node) => {
+      node.addEventListener("input", () => {
+        state.draftFactoids[Number(node.getAttribute("data-idx"))] = node.value;
+      });
+    });
+    listEl.querySelectorAll(".factoid-remove-btn").forEach((node) => {
+      node.addEventListener("click", () => {
+        state.draftFactoids.splice(Number(node.getAttribute("data-idx")), 1);
+        renderFactoidsModal();
+      });
+    });
+  }
+
+  function openFactoidsModal() {
+    state.draftFactoids = state.factoids.slice();
+    state.showFactoidsModal = true;
+    renderFactoidsModal();
+    el("factoids-modal").style.display = "flex";
+  }
+
+  function closeFactoidsModal() {
+    state.showFactoidsModal = false;
+    el("factoids-modal").style.display = "none";
+  }
+
+  async function handleSaveFactoids() {
+    const cleaned = state.draftFactoids.map((t) => t.trim()).filter(Boolean);
+    const finalFactoids = cleaned.length ? cleaned : DEFAULT_FACTOIDS.slice();
+    state.factoids = finalFactoids;
+    state.quoteIdx = 0;
+    closeFactoidsModal();
+    renderHighlight();
+    try {
+      await api("/api/me", { method: "PUT", body: JSON.stringify({ highlightTexts: cleaned }) });
+    } catch (err) {
+      // ignore; UI already reflects the local change
+    }
   }
 
   function renderStopwatch() {
@@ -124,7 +172,7 @@
       const finalLabel = priorLaps.length === 0 ? "Workout" : "Lap " + (priorLaps.length + 1);
       const finalSegment = { label: finalLabel, display: formatLap(state.elapsedMs), ms: state.elapsedMs };
       state.segments = [...priorLaps, finalSegment];
-      state.forms = state.segments.map(() => ({ exercise: "", reps: "", weight: "", distance: "", notes: "", rpe: 5 }));
+      state.forms = state.segments.map(() => ({ exercise: "", reps: "", weight: "", distance: "", notes: "", rpe: 5, routineId: "" }));
       state.activePage = 0;
       state.running = false;
       enterEntryView();
@@ -187,6 +235,7 @@
 
   function saveActiveFormFromInputs() {
     const idx = state.activePage;
+    const routineId = state.forms[idx] ? state.forms[idx].routineId : "";
     state.forms[idx] = {
       exercise: el("f-exercise").value,
       reps: el("f-reps").value,
@@ -194,11 +243,46 @@
       distance: el("f-distance").value,
       notes: el("f-notes").value,
       rpe: Number(el("f-rpe").value),
+      routineId,
     };
   }
 
+  function renderRoutineOptions() {
+    const fieldEl = el("f-routine-field");
+    const selectEl = el("f-routine");
+    if (state.routines.length === 0) {
+      fieldEl.style.display = "none";
+      return;
+    }
+    fieldEl.style.display = "";
+    selectEl.innerHTML =
+      '<option value="">Choose a routine…</option>' +
+      state.routines.map((r) => `<option value="${r.id}">${r.name}</option>`).join("");
+  }
+
+  function handleRoutineSelect() {
+    const routineId = el("f-routine").value;
+    const routine = state.routines.find((r) => String(r.id) === routineId);
+    const idx = state.activePage;
+    if (routine) {
+      state.forms[idx] = {
+        exercise: routine.exercise || "",
+        reps: routine.reps || "",
+        weight: routine.weight || "",
+        distance: routine.distance || "",
+        notes: routine.notes || "",
+        rpe: routine.rpe || 5,
+        routineId,
+      };
+    } else {
+      state.forms[idx] = { ...state.forms[idx], routineId: "" };
+    }
+    renderEntryForm();
+  }
+
   function renderEntryForm() {
-    const form = state.forms[state.activePage] || { exercise: "", reps: "", weight: "", distance: "", notes: "", rpe: 5 };
+    const form = state.forms[state.activePage] || { exercise: "", reps: "", weight: "", distance: "", notes: "", rpe: 5, routineId: "" };
+    el("f-routine").value = form.routineId || "";
     el("f-exercise").value = form.exercise;
     el("f-reps").value = form.reps;
     el("f-weight").value = form.weight;
@@ -277,18 +361,25 @@
     el("pr-best-week").textContent = s.bestWeekMs ? formatDurationLong(s.bestWeekMs) : "—";
   }
 
+  async function loadRoutines() {
+    const { routines } = await api("/api/routines");
+    state.routines = routines;
+    renderRoutineOptions();
+  }
+
   async function loadMe() {
     const { user } = await api("/api/me");
     el("avatar").textContent = (user.name || "?").trim().charAt(0).toUpperCase();
-    state.customHighlight = user.highlightText || null;
+    state.factoids = user.highlightTexts && user.highlightTexts.length ? user.highlightTexts : DEFAULT_FACTOIDS.slice();
+    state.quoteIdx = Math.floor(Math.random() * state.factoids.length);
     renderHighlight();
     return user;
   }
 
   function initHighlightRotation() {
     state.quoteInterval = setInterval(() => {
-      if (!state.customHighlight) {
-        state.quoteIdx = (state.quoteIdx + 1) % FACTOIDS.length;
+      if (!state.showFactoidsModal) {
+        state.quoteIdx = (state.quoteIdx + 1) % state.factoids.length;
         renderHighlight();
       }
     }, 6000);
@@ -302,22 +393,17 @@
     el("f-rpe").addEventListener("input", () => {
       el("f-rpe-val").textContent = el("f-rpe").value;
     });
+    el("f-routine").addEventListener("change", handleRoutineSelect);
 
-    el("highlight-edit-btn").addEventListener("click", () => {
-      state.editingHighlight = true;
-      renderHighlight();
-      el("highlight-input").focus();
+    el("highlight-edit-btn").addEventListener("click", openFactoidsModal);
+    el("factoids-cancel").addEventListener("click", closeFactoidsModal);
+    el("factoids-save").addEventListener("click", handleSaveFactoids);
+    el("factoid-add-btn").addEventListener("click", () => {
+      state.draftFactoids.push("");
+      renderFactoidsModal();
     });
-    el("highlight-save").addEventListener("click", async () => {
-      const v = el("highlight-input").value.trim();
-      state.customHighlight = v || null;
-      state.editingHighlight = false;
-      renderHighlight();
-      try {
-        await api("/api/me", { method: "PUT", body: JSON.stringify({ highlightText: state.customHighlight }) });
-      } catch (err) {
-        // ignore; UI already reflects the local change
-      }
+    el("factoids-modal").addEventListener("click", (e) => {
+      if (e.target.id === "factoids-modal") closeFactoidsModal();
     });
 
     el("logout-link").addEventListener("click", async (e) => {
@@ -341,6 +427,7 @@
     try {
       await loadMe();
       await loadStats();
+      await loadRoutines();
     } catch (err) {
       // loadMe/loadStats already redirect to login on 401
     }
