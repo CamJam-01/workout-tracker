@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="stylesheet" href="_ds/organic-4c858df5-76c5-4f95-8847-15279404b8d8/styles.css">
+<style>
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);">
+
+  <!-- NAV -->
+  <div style="display:flex;align-items:center;gap:17.6px;padding:17.6px 35px;">
+    <a href="Landing.dc.html" style="font-family:var(--font-heading);font-size:20px;margin-right:auto;text-decoration:none;color:var(--color-text);">Stride</a>
+    <a href="Routines.dc.html" style="font-size:14px;text-decoration:none;color:var(--color-text);">Routines</a>
+    <a href="History.dc.html" style="font-size:14px;text-decoration:none;color:var(--color-text);">History</a>
+    <div style="font-size:13px;color:color-mix(in srgb, var(--color-text) 60%, transparent);">Wednesday, Aug 7</div>
+    <div style="width:34px;height:34px;border-radius:999px;background:var(--color-accent);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:14px;">J</div>
+  </div>
+
+  <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:0 35px 44px;display:flex;flex-direction:column;gap:26.4px;">
+
+      <!-- 1. STOPWATCH -->
+      <div style="width:100%;min-height:32vh;background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);box-shadow:var(--shadow-md);padding:35px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;">
+
+        <div style="display:flex;align-items:baseline;gap:6px;">
+          <div style="font-family:'Figtree',sans-serif;font-weight:800;font-variant-numeric:tabular-nums;font-size:min(13vw,128px);line-height:1;letter-spacing:-0.02em;">{{ displayTime }}</div>
+        </div>
+        <div style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb, var(--color-text) 55%, transparent);">{{ statusLabel }}</div>
+
+        <div style="display:flex;align-items:center;justify-content:center;gap:28px;margin-top:6px;">
+          <button onclick="{{ handleLap }}" disabled="{{ lapDisabled }}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-family:var(--font-heading);font-size:14px;color:var(--color-text);background:transparent;border:1px solid var(--color-divider);padding:11px 22px;border-radius:999px;opacity:{{ lapOpacity }};">
+            Lap
+          </button>
+
+          <button onclick="{{ handlePlayPause }}" aria-label="{{ toggleAriaLabel }}" style="width:96px;height:96px;border-radius:999px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:{{ toggleBg }};box-shadow:var(--shadow-lg);">
+            <sc-if value="{{ running }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:6px;">
+                <div style="width:8px;height:26px;background:var(--color-neutral-100);border-radius:2px;"></div>
+                <div style="width:8px;height:26px;background:var(--color-neutral-100);border-radius:2px;"></div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ notRunning }}" hint-placeholder-val="{{ true }}">
+              <div style="width:0;height:0;margin-left:6px;border-top:18px solid transparent;border-bottom:18px solid transparent;border-left:28px solid var(--color-neutral-100);"></div>
+            </sc-if>
+          </button>
+
+          <button onclick="{{ handleStop }}" disabled="{{ stopDisabled }}" aria-label="Stop workout" style="width:76px;height:76px;border-radius:999px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:#c1483a;box-shadow:var(--shadow-lg);opacity:{{ stopOpacity }};">
+            <div style="width:22px;height:22px;background:var(--color-neutral-100);border-radius:4px;"></div>
+          </button>
+        </div>
+
+        <sc-if value="{{ hasLaps }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:10px;overflow-x:auto;max-width:100%;padding-top:6px;">
+            <sc-for list="{{ lapsReversed }}" as="lap" hint-placeholder-count="0">
+              <div style="flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;background:var(--color-neutral-100);border-radius:16px;padding:8px 14px;">
+                <span style="letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb, var(--color-text) 55%, transparent);">{{ lap.label }}</span>
+                <span style="font-variant-numeric:tabular-nums;font-weight:700;font-size:13px;">{{ lap.display }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- 2. MOTIVATIONAL HIGHLIGHT -->
+      <div style="width:100%;background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);padding:26.4px 35px;display:flex;align-items:center;gap:22px;box-shadow:0 1px 2px 0;">
+        <div style="width:44px;height:44px;flex:none;border-radius:999px;background:var(--color-accent-2-100);display:flex;align-items:center;justify-content:center;">
+          <div style="width:16px;height:16px;border-radius:50%;background:var(--color-accent-2);"></div>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent-2-600);margin-bottom:4px;">{{ highlightKicker }}</div>
+          <div key="{{ highlightKey }}" style="font-family:var(--font-heading);font-size:19px;line-height:1.3;animation:fadeIn 0.5s ease;">{{ highlightText }}</div>
+        </div>
+        <button onclick="{{ handleOpenFactoidsModal }}" style="cursor:pointer;font-family:var(--font-heading);font-size:13px;color:var(--color-accent);background:transparent;border:none;padding:8px 6px;flex:none;">Edit</button>
+      </div>
+
+      <!-- 3. HISTORICAL DATA -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:22px;">
+
+        <div style="background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);padding:26.4px;display:flex;flex-direction:column;gap:13.2px;">
+          <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent);">All-time</div>
+          <div style="display:flex;gap:26.4px;">
+            <div>
+              <div style="font-family:var(--font-heading);font-size:30px;">{{ totalWorkouts }}</div>
+              <div style="font-size:12px;color:color-mix(in srgb, var(--color-text) 60%, transparent);">workouts</div>
+            </div>
+            <div>
+              <div style="font-family:var(--font-heading);font-size:30px;">{{ totalTimeDisplay }}</div>
+              <div style="font-size:12px;color:color-mix(in srgb, var(--color-text) 60%, transparent);">total time</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);padding:26.4px;display:flex;flex-direction:column;gap:13.2px;">
+          <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent);">This week</div>
+          <div style="display:flex;align-items:flex-end;gap:8px;height:80px;">
+            <sc-for list="{{ weekBars }}" as="bar" hint-placeholder-count="7">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:flex-end;height:100%;">
+                <div style="width:100%;max-width:22px;border-radius:6px;background:{{ bar.color }};height:{{ bar.height }};"></div>
+                <div style="font-size:10px;color:color-mix(in srgb, var(--color-text) 50%, transparent);">{{ bar.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);padding:26.4px;display:flex;flex-direction:column;gap:13.2px;">
+          <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent);">Personal records</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;font-size:13px;">
+              <span style="color:color-mix(in srgb, var(--color-text) 65%, transparent);">Max weight</span>
+              <span style="font-weight:700;">{{ maxWeightDisplay }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;">
+              <span style="color:color-mix(in srgb, var(--color-text) 65%, transparent);">Longest workout</span>
+              <span style="font-weight:700;">{{ longestWorkoutDisplay }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;">
+              <span style="color:color-mix(in srgb, var(--color-text) 65%, transparent);">Best week</span>
+              <span style="font-weight:700;">{{ bestWeekDisplay }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- FACTOIDS MODAL -->
+  <sc-if value="{{ showFactoidsModal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(32,30,29,0.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:22px;">
+      <div style="background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);box-shadow:var(--shadow-lg);width:100%;max-width:520px;max-height:80vh;display:flex;flex-direction:column;padding:26.4px;gap:17.6px;">
+        <div>
+          <div style="font-family:var(--font-heading);font-size:19px;">Edit highlights</div>
+          <div style="font-size:13px;color:color-mix(in srgb, var(--color-text) 60%, transparent);margin-top:4px;">Add, edit, or remove the messages that cycle above.</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1;">
+          <sc-for list="{{ draftFactoids }}" as="item" hint-placeholder-count="3">
+            <div style="display:flex;gap:8px;align-items:flex-start;">
+              <textarea class="__no_class" value="{{ item.text }}" oninput="{{ item.onChange }}" style="flex:1;min-height:44px;padding:8px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:16px;resize:vertical;font-family:inherit;"></textarea>
+              <button onclick="{{ item.onRemove }}" aria-label="Remove" style="cursor:pointer;flex:none;width:36px;height:36px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);font-size:16px;">&times;</button>
+            </div>
+          </sc-for>
+        </div>
+
+        <button onclick="{{ handleAddFactoid }}" style="cursor:pointer;align-self:flex-start;font-family:var(--font-heading);font-size:13px;color:var(--color-accent);background:transparent;border:none;padding:4px 0;">+ Add another</button>
+
+        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:6px;">
+          <button onclick="{{ handleCloseFactoidsModal }}" style="cursor:pointer;font-family:var(--font-heading);font-size:14px;background:transparent;border:1px solid var(--color-divider);color:var(--color-text);padding:11px 22px;border-radius:999px;">Cancel</button>
+          <button onclick="{{ handleSaveFactoids }}" style="cursor:pointer;font-family:var(--font-heading);font-size:14px;background:var(--color-accent);color:var(--color-bg);border:none;padding:11px 26px;border-radius:999px;">Save</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- POST-WORKOUT ENTRY (shown after Stop) -->
+  <sc-if value="{{ isEntry }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:0 35px 60px;max-width:{{ entryMaxWidth }};margin:0 auto;animation:fadeIn 0.4s ease;">
+      <div>
+        <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent-2-600);margin-bottom:6px;">Workout logged</div>
+        <div style="font-family:var(--font-heading);font-size:28px;">How did that go?</div>
+        <div style="font-size:14px;color:color-mix(in srgb, var(--color-text) 60%, transparent);margin-top:6px;">{{ entrySummary }}</div>
+      </div>
+
+      <div style="display:flex;gap:22px;align-items:flex-start;margin-top:22px;">
+
+        <sc-if value="{{ isMultiPage }}" hint-placeholder-val="{{ false }}">
+          <div style="position:sticky;top:22px;flex:none;width:150px;display:flex;flex-direction:column;gap:6px;background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);padding:14px;box-shadow:var(--shadow-md);">
+            <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:color-mix(in srgb, var(--color-text) 55%, transparent);padding:0 4px 4px;">Splits</div>
+            <sc-for list="{{ pages }}" as="page" hint-placeholder-count="2">
+              <button onclick="{{ page.select }}" style="cursor:pointer;text-align:left;border:none;background:{{ page.bg }};color:{{ page.color }};font-family:var(--font-heading);font-size:13px;padding:10px 12px;border-radius:14px;display:flex;flex-direction:column;gap:2px;">
+                <span>{{ page.label }}</span>
+                <span style="font-size:11px;font-weight:400;font-variant-numeric:tabular-nums;opacity:0.75;">{{ page.duration }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <div style="flex:1;min-width:0;background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);padding:26.4px;display:flex;flex-direction:column;gap:17.6px;">
+
+          <sc-if value="{{ isMultiPage }}" hint-placeholder-val="{{ false }}">
+            <div style="font-family:var(--font-heading);font-size:16px;">{{ activePageLabel }} <span style="font-size:13px;font-weight:400;color:color-mix(in srgb, var(--color-text) 55%, transparent);font-variant-numeric:tabular-nums;">&middot; {{ activePageDuration }}</span></div>
+          </sc-if>
+
+          <sc-if value="{{ hasRoutines }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Load from a routine</label>
+              <select class="__no_class" value="{{ routineSelectValue }}" onchange="{{ handleRoutineSelect }}" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;">
+                <option value="">Choose a routine&hellip;</option>
+                <sc-for list="{{ routineOptions }}" as="r" hint-placeholder-count="0">
+                  <option value="{{ r.id }}">{{ r.name }}</option>
+                </sc-for>
+              </select>
+            </div>
+          </sc-if>
+
+          <div>
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Exercise / machine</label>
+            <input class="__no_class" value="{{ formExercise }}" oninput="{{ handleFormExercise }}" placeholder="e.g. Treadmill, Bench press" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;"></input>
+          </div>
+
+          <div style="display:flex;gap:14px;">
+            <div style="flex:1;">
+              <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Reps &amp; sets</label>
+              <input class="__no_class" value="{{ formReps }}" oninput="{{ handleFormReps }}" placeholder="e.g. 3x12" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;"></input>
+            </div>
+            <div style="flex:1;">
+              <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Weight ({{ units }})</label>
+              <input class="__no_class" value="{{ formWeight }}" oninput="{{ handleFormWeight }}" placeholder="e.g. 135" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;"></input>
+            </div>
+          </div>
+
+          <div>
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Distance</label>
+            <input class="__no_class" value="{{ formDistance }}" oninput="{{ handleFormDistance }}" placeholder="e.g. 2.4 mi" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;"></input>
+          </div>
+
+          <div>
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Effort (RPE {{ formRpe }}/10)</label>
+            <input class="__no_class" type="range" min="1" max="10" value="{{ formRpe }}" oninput="{{ handleFormRpe }}" style="width:100%;accent-color:var(--color-accent);"></input>
+          </div>
+
+          <div>
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Notes</label>
+            <textarea class="__no_class" value="{{ formNotes }}" oninput="{{ handleFormNotes }}" placeholder="How did it feel?" style="width:100%;min-height:80px;padding:10px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:16px;resize:vertical;font-family:inherit;"></textarea>
+          </div>
+
+          <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:6px;">
+            <button onclick="{{ handleDiscard }}" style="cursor:pointer;font-family:var(--font-heading);font-size:14px;background:transparent;border:1px solid var(--color-divider);color:var(--color-text);padding:11px 22px;border-radius:999px;">Discard</button>
+            <button onclick="{{ handleSaveWorkout }}" style="cursor:pointer;font-family:var(--font-heading);font-size:14px;background:var(--color-accent);color:var(--color-bg);border:none;padding:11px 26px;border-radius:999px;">Save workout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;units&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;lbs&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;lbs&quot;, &quot;kg&quot;], &quot;section&quot;: &quot;Behavior&quot;}}">
+const FACTOIDS = [
+  "Just 30 minutes of exercise a day can boost your mood for up to 12 hours.",
+  "Regular cardio lowers resting heart rate and strengthens your heart muscle.",
+  "Strength training twice a week helps preserve muscle mass as you age.",
+  "Exercise increases BDNF, a protein that supports memory and learning.",
+  "A brisk walk after meals can measurably lower blood sugar spikes.",
+  "Consistent movement improves sleep quality, even in short sessions.",
+  "Exercise releases endorphins that reduce perceived stress within minutes.",
+];
+
+function pad(n, len) { return String(n).padStart(len, "0"); }
+function formatClock(ms) {
+  const totalCs = Math.floor(ms / 10);
+  const cs = totalCs % 100;
+  const totalSec = Math.floor(ms / 1000);
+  const sec = totalSec % 60;
+  const min = Math.floor(totalSec / 60);
+  return pad(min, 2) + ":" + pad(sec, 2) + "." + pad(cs, 2);
+}
+function formatLap(ms) {
+  const totalSec = Math.floor(ms / 1000);
+  const sec = totalSec % 60;
+  const min = Math.floor(totalSec / 60);
+  return pad(min, 2) + ":" + pad(sec, 2);
+}
+
+class Component extends DCLogic {
+  state = {
+    running: false,
+    startTs: null,
+    elapsedMs: 0,
+    laps: [],
+    view: "dashboard",
+    quoteIdx: 0,
+    factoids: FACTOIDS.slice(),
+    showFactoidsModal: false,
+    draftFactoids: [],
+    segments: [],
+    forms: [],
+    activePage: 0,
+    routines: [],
+  };
+
+  componentDidMount() {
+    this._quoteInterval = setInterval(() => {
+      if (!this.state.showFactoidsModal) {
+        this.setState((s) => ({ quoteIdx: (s.quoteIdx + 1) % Math.max(s.factoids.length, 1) }));
+      }
+    }, 6000);
+    const DEFAULT_ROUTINES = [
+      { id: "t1", name: "Push day", exercise: "Bench press", reps: "4x10", weight: "135 lbs", distance: "—", rpe: 7, notes: "Warm up with 2 light sets first." },
+      { id: "t2", name: "5k run", exercise: "Treadmill", reps: "—", weight: "—", distance: "3.1 mi", rpe: 6, notes: "Steady pace, negative split last mile." },
+      { id: "t3", name: "Leg day", exercise: "Back squat", reps: "5x8", weight: "185 lbs", distance: "—", rpe: 8, notes: "Focus on depth, controlled tempo." },
+    ];
+    try {
+      const raw = localStorage.getItem("stride-routine-templates");
+      const routines = raw ? JSON.parse(raw) : DEFAULT_ROUTINES;
+      this.setState({ routines: Array.isArray(routines) && routines.length ? routines : DEFAULT_ROUTINES });
+    } catch (e) {
+      this.setState({ routines: DEFAULT_ROUTINES });
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this._quoteInterval);
+    clearInterval(this._tickInterval);
+  }
+
+  handlePlayPause = () => {
+    if (!this.state.running) {
+      const startTs = Date.now() - this.state.elapsedMs;
+      this._tickInterval = setInterval(() => {
+        this.setState({ elapsedMs: Date.now() - this.state.startTs });
+      }, 50);
+      this.setState({ running: true, startTs });
+    } else {
+      clearInterval(this._tickInterval);
+      this.setState({ running: false });
+    }
+  };
+
+  handleStop = () => {
+    if (!this.state.running && this.state.elapsedMs === 0) return;
+    clearInterval(this._tickInterval);
+    const priorLaps = this.state.laps;
+    const finalLabel = priorLaps.length === 0 ? "Workout" : "Lap " + (priorLaps.length + 1);
+    const finalSegment = { label: finalLabel, display: formatLap(this.state.elapsedMs), ms: this.state.elapsedMs };
+    const segments = [...priorLaps, finalSegment];
+    const forms = segments.map(() => ({ exercise: "", reps: "", weight: "", distance: "", notes: "", rpe: 5 }));
+    this.setState({ running: false, view: "entry", segments, forms, activePage: 0 });
+  };
+
+  selectPage = (idx) => () => this.setState({ activePage: idx });
+
+  handleRoutineSelect = (e) => {
+    const id = e.target.value;
+    const idx = this.state.activePage;
+    const routine = this.state.routines.find((r) => r.id === id);
+    if (!routine) {
+      this.setState((s) => {
+        const forms = s.forms.slice();
+        forms[idx] = { ...forms[idx], routineId: "" };
+        return { forms };
+      });
+      return;
+    }
+    this.setState((s) => {
+      const forms = s.forms.slice();
+      forms[idx] = {
+        exercise: routine.exercise || "", reps: routine.reps || "", weight: routine.weight || "",
+        distance: routine.distance || "", notes: routine.notes || "", rpe: routine.rpe || 5,
+        routineId: id,
+      };
+      return { forms };
+    });
+  };
+
+  handleLap = () => {
+    if (!this.state.running) return;
+    const label = "Lap " + (this.state.laps.length + 1);
+    const newLap = { label, display: formatLap(this.state.elapsedMs), ms: this.state.elapsedMs };
+    const startTs = Date.now();
+    this.setState((s) => ({ laps: [...s.laps, newLap], startTs, elapsedMs: 0 }));
+  };
+
+  handleOpenFactoidsModal = () => this.setState({ showFactoidsModal: true, draftFactoids: this.state.factoids.slice() });
+  handleCloseFactoidsModal = () => this.setState({ showFactoidsModal: false, draftFactoids: [] });
+  handleAddFactoid = () => this.setState((s) => ({ draftFactoids: [...s.draftFactoids, ""] }));
+  handleChangeFactoid = (idx) => (e) => {
+    const value = e.target.value;
+    this.setState((s) => {
+      const draftFactoids = s.draftFactoids.slice();
+      draftFactoids[idx] = value;
+      return { draftFactoids };
+    });
+  };
+  handleRemoveFactoid = (idx) => () => {
+    this.setState((s) => ({ draftFactoids: s.draftFactoids.filter((_, i) => i !== idx) }));
+  };
+  handleSaveFactoids = () => {
+    const cleaned = this.state.draftFactoids.map((t) => t.trim()).filter(Boolean);
+    this.setState({ factoids: cleaned.length ? cleaned : FACTOIDS.slice(), showFactoidsModal: false, draftFactoids: [], quoteIdx: 0 });
+  };
+
+  handleFormField = (field) => (e) => {
+    const idx = this.state.activePage;
+    const value = e.target.value;
+    this.setState((s) => {
+      const forms = s.forms.slice();
+      forms[idx] = { ...forms[idx], [field]: value };
+      return { forms };
+    });
+  };
+  handleFormExercise = this.handleFormField("exercise");
+  handleFormReps = this.handleFormField("reps");
+  handleFormWeight = this.handleFormField("weight");
+  handleFormDistance = this.handleFormField("distance");
+  handleFormNotes = this.handleFormField("notes");
+  handleFormRpe = this.handleFormField("rpe");
+
+  handleDiscard = () => this.resetWorkout();
+  handleSaveWorkout = () => this.resetWorkout();
+
+  resetWorkout = () => {
+    this.setState({
+      view: "dashboard",
+      elapsedMs: 0,
+      laps: [],
+      startTs: null,
+      segments: [],
+      forms: [],
+      activePage: 0,
+    });
+  };
+
+  renderVals() {
+    const s = this.state;
+    const units = this.props.units ?? "lbs";
+    const totalLapsMs = s.laps.reduce((a, l) => a + l.ms, 0);
+    const entryTotalMs = totalLapsMs + s.elapsedMs;
+
+    const isMultiPage = s.segments.length > 1;
+    const activeForm = s.forms[s.activePage] || { exercise: "", reps: "", weight: "", distance: "", notes: "", rpe: 5 };
+    const activeSegment = s.segments[s.activePage];
+    const pages = s.segments.map((seg, i) => ({
+      label: seg.label,
+      duration: seg.display,
+      bg: i === s.activePage ? "var(--color-accent)" : "transparent",
+      color: i === s.activePage ? "var(--color-bg)" : "var(--color-text)",
+      select: this.selectPage(i),
+    }));
+    const entryTotalFromSegments = s.segments.reduce((a, seg) => a + seg.ms, 0);
+
+    const weekData = [
+      { label: "M", mins: 32 }, { label: "T", mins: 0 }, { label: "W", mins: 48 },
+      { label: "T", mins: 55 }, { label: "F", mins: 0 }, { label: "S", mins: 70 }, { label: "S", mins: 20 },
+    ];
+    const maxMins = Math.max(...weekData.map((d) => d.mins), 1);
+    const weekBars = weekData.map((d) => ({
+      label: d.label,
+      height: Math.max(6, Math.round((d.mins / maxMins) * 100)) + "%",
+      color: d.mins > 0 ? "var(--color-accent)" : "rgba(32,30,29,0.12)",
+    }));
+
+    return {
+      isDashboard: s.view === "dashboard",
+      isEntry: s.view === "entry",
+      running: s.running,
+      notRunning: !s.running,
+      displayTime: formatClock(s.elapsedMs),
+      statusLabel: s.running ? "Recording" : (s.elapsedMs > 0 ? "Paused" : "Ready when you are"),
+      toggleBg: "#4f8a5b",
+      toggleAriaLabel: s.running ? "Pause workout" : "Start workout",
+      handlePlayPause: this.handlePlayPause,
+      handleStop: this.handleStop,
+      stopDisabled: !s.running && s.elapsedMs === 0,
+      stopOpacity: (!s.running && s.elapsedMs === 0) ? 0.4 : 1,
+      handleLap: this.handleLap,
+      lapDisabled: !s.running,
+      lapOpacity: s.running ? 1 : 0.45,
+      hasLaps: s.laps.length > 0,
+      lapsReversed: [...s.laps].reverse(),
+
+      highlightKicker: "Did you know",
+      highlightText: s.factoids[s.quoteIdx] || "",
+      highlightKey: "q" + s.quoteIdx,
+      showFactoidsModal: s.showFactoidsModal,
+      draftFactoids: s.draftFactoids.map((text, i) => ({
+        text,
+        onChange: this.handleChangeFactoid(i),
+        onRemove: this.handleRemoveFactoid(i),
+      })),
+      handleOpenFactoidsModal: this.handleOpenFactoidsModal,
+      handleCloseFactoidsModal: this.handleCloseFactoidsModal,
+      handleAddFactoid: this.handleAddFactoid,
+      handleSaveFactoids: this.handleSaveFactoids,
+
+      totalWorkouts: 47,
+      totalTimeDisplay: "32h 14m",
+      weekBars,
+      maxWeightDisplay: units === "kg" ? "84 kg" : "185 lbs",
+      longestWorkoutDisplay: "1h 42m",
+      bestWeekDisplay: "5h 05m",
+
+      entrySummary: "Total time " + formatLap(entryTotalFromSegments) + (s.segments.length > 1 ? " across " + s.segments.length + " splits" : ""),
+      units,
+      entryMaxWidth: isMultiPage ? "780px" : "560px",
+      isMultiPage,
+      pages,
+      activePageLabel: activeSegment ? activeSegment.label : "",
+      activePageDuration: activeSegment ? activeSegment.display : "",
+      formExercise: activeForm.exercise, handleFormExercise: this.handleFormExercise,
+      formReps: activeForm.reps, handleFormReps: this.handleFormReps,
+      formWeight: activeForm.weight, handleFormWeight: this.handleFormWeight,
+      formDistance: activeForm.distance, handleFormDistance: this.handleFormDistance,
+      formNotes: activeForm.notes, handleFormNotes: this.handleFormNotes,
+      formRpe: activeForm.rpe, handleFormRpe: this.handleFormRpe,
+      hasRoutines: s.routines.length > 0,
+      routineOptions: s.routines.map((r) => ({ id: r.id, name: r.name })),
+      routineSelectValue: activeForm.routineId || "",
+      handleRoutineSelect: this.handleRoutineSelect,
+      handleDiscard: this.handleDiscard,
+      handleSaveWorkout: this.handleSaveWorkout,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

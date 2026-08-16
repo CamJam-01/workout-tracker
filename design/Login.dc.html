@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="stylesheet" href="_ds/organic-4c858df5-76c5-4f95-8847-15279404b8d8/styles.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  a { color: var(--color-accent); }
+  a:hover { color: var(--color-accent-700); }
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column;">
+
+  <div style="display:flex;align-items:center;padding:26px 44px;">
+    <a href="Landing.dc.html" style="font-family:var(--font-heading);font-size:20px;text-decoration:none;color:var(--color-text);">Stride</a>
+  </div>
+
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px 24px 80px;">
+    <div style="width:100%;max-width:380px;display:flex;flex-direction:column;gap:22px;">
+      <div>
+        <h1 style="font-family:var(--font-heading);font-weight:400;font-size:30px;margin:0 0 8px;">Welcome back</h1>
+        <p style="font-size:14px;color:color-mix(in srgb, var(--color-text) 60%, transparent);margin:0;">Log in to pick up where you left off.</p>
+      </div>
+
+      <div style="background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);padding:28px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow-md);">
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Email</label>
+          <input type="email" placeholder="you@example.com" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"/>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Password</label>
+          <div style="position:relative;">
+            <input type="{{ passwordFieldType }}" placeholder="••••••••" style="width:100%;min-height:36px;padding:6px 44px 6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"/>
+            <button type="button" onclick="{{ togglePasswordVisibility }}" aria-label="{{ toggleAriaLabel }}" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);cursor:pointer;background:transparent;border:none;padding:6px;font-size:12px;font-family:var(--font-heading);color:color-mix(in srgb, var(--color-text) 60%, transparent);">{{ toggleLabel }}</button>
+          </div>
+        </div>
+        <a href="Dashboard.dc.html" style="text-align:center;font-family:var(--font-heading);font-size:14px;text-decoration:none;background:var(--color-accent);color:var(--color-bg);padding:11px 22px;border-radius:999px;margin-top:6px;">Log in</a>
+        <button type="button" onclick="{{ openResetModal }}" style="cursor:pointer;background:transparent;border:none;padding:0;text-align:center;font-size:13px;color:color-mix(in srgb, var(--color-text) 65%, transparent);text-decoration:underline;">Reset password</button>
+      </div>
+
+      <p style="text-align:center;font-size:13px;color:color-mix(in srgb, var(--color-text) 60%, transparent);margin:0;">
+        New to Stride? <a href="Signup.dc.html" style="text-decoration:none;font-weight:600;">Create an account</a>
+      </p>
+    </div>
+  </div>
+
+  <sc-if value="{{ showResetModal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(32,30,29,0.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:22px;">
+      <div style="background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);box-shadow:var(--shadow-lg);width:100%;max-width:380px;padding:26.4px;display:flex;flex-direction:column;gap:16px;">
+        <div>
+          <div style="font-family:var(--font-heading);font-size:19px;">Reset your password</div>
+          <div style="font-size:13px;color:color-mix(in srgb, var(--color-text) 60%, transparent);margin-top:4px;">Enter your account email and we'll send a reset link.</div>
+        </div>
+
+        <input type="email" value="{{ resetEmail }}" oninput="{{ handleResetEmailChange }}" placeholder="you@example.com" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"/>
+
+        <sc-if value="{{ resetStatus }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;color:{{ resetStatusColor }};">{{ resetStatus }}</div>
+        </sc-if>
+
+        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:4px;">
+          <button type="button" onclick="{{ closeResetModal }}" style="cursor:pointer;font-family:var(--font-heading);font-size:14px;background:transparent;border:1px solid var(--color-divider);color:var(--color-text);padding:11px 22px;border-radius:999px;">Cancel</button>
+          <button type="button" onclick="{{ handleSendReset }}" style="cursor:pointer;font-family:var(--font-heading);font-size:14px;background:var(--color-accent);color:var(--color-bg);border:none;padding:11px 22px;border-radius:999px;">Send link</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const REGISTERED_EMAILS = ["you@example.com", "jamie@stride.app", "taylor@stride.app"];
+
+class Component extends DCLogic {
+  state = { showPassword: false, showResetModal: false, resetEmail: "", resetStatus: "", resetStatusColor: "" };
+
+  togglePasswordVisibility = () => this.setState((s) => ({ showPassword: !s.showPassword }));
+
+  openResetModal = () => this.setState({ showResetModal: true, resetEmail: "", resetStatus: "", resetStatusColor: "" });
+  closeResetModal = () => this.setState({ showResetModal: false });
+  handleResetEmailChange = (e) => this.setState({ resetEmail: e.target.value, resetStatus: "" });
+  handleSendReset = () => {
+    const email = this.state.resetEmail.trim().toLowerCase();
+    if (!email) {
+      this.setState({ resetStatus: "Enter an email address.", resetStatusColor: "#c1483a" });
+      return;
+    }
+    const found = REGISTERED_EMAILS.includes(email);
+    if (found) {
+      this.setState({ resetStatus: "Reset link sent — check your inbox.", resetStatusColor: "var(--color-accent-2-600)" });
+    } else {
+      this.setState({ resetStatus: "No account found with that email.", resetStatusColor: "#c1483a" });
+    }
+  };
+
+  renderVals() {
+    const showPassword = this.state.showPassword;
+    return {
+      passwordFieldType: showPassword ? "text" : "password",
+      toggleLabel: showPassword ? "Hide" : "Show",
+      toggleAriaLabel: showPassword ? "Hide password" : "Show password",
+      togglePasswordVisibility: this.togglePasswordVisibility,
+      showResetModal: this.state.showResetModal,
+      openResetModal: this.openResetModal,
+      closeResetModal: this.closeResetModal,
+      resetEmail: this.state.resetEmail,
+      handleResetEmailChange: this.handleResetEmailChange,
+      handleSendReset: this.handleSendReset,
+      resetStatus: this.state.resetStatus,
+      resetStatusColor: this.state.resetStatusColor,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

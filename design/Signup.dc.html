@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="stylesheet" href="_ds/organic-4c858df5-76c5-4f95-8847-15279404b8d8/styles.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  a { color: var(--color-accent); }
+  a:hover { color: var(--color-accent-700); }
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column;">
+
+  <div style="display:flex;align-items:center;padding:26px 44px;">
+    <a href="Landing.dc.html" style="font-family:var(--font-heading);font-size:20px;text-decoration:none;color:var(--color-text);">Stride</a>
+  </div>
+
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px 24px 80px;">
+    <div style="width:100%;max-width:380px;display:flex;flex-direction:column;gap:22px;">
+      <div>
+        <h1 style="font-family:var(--font-heading);font-weight:400;font-size:30px;margin:0 0 8px;">Create your account</h1>
+        <p style="font-size:14px;color:color-mix(in srgb, var(--color-text) 60%, transparent);margin:0;">Start tracking in under a minute.</p>
+      </div>
+
+      <div style="background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);padding:28px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow-md);">
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Name</label>
+          <input type="text" placeholder="Jordan Lee" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"/>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Email</label>
+          <input type="email" placeholder="you@example.com" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"/>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Password</label>
+          <input type="password" placeholder="At least 8 characters" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"/>
+        </div>
+        <a href="Dashboard.dc.html" style="text-align:center;font-family:var(--font-heading);font-size:14px;text-decoration:none;background:var(--color-accent);color:var(--color-bg);padding:11px 22px;border-radius:999px;margin-top:6px;">Create account</a>
+      </div>
+
+      <p style="text-align:center;font-size:13px;color:color-mix(in srgb, var(--color-text) 60%, transparent);margin:0;">
+        Already have an account? <a href="Login.dc.html" style="text-decoration:none;font-weight:600;">Log in</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+</body>
+</html>

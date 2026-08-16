@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="stylesheet" href="_ds/organic-4c858df5-76c5-4f95-8847-15279404b8d8/styles.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  a { color: var(--color-accent); }
+  a:hover { color: var(--color-accent-700); }
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);">
+
+  <div style="display:flex;align-items:center;gap:17.6px;padding:17.6px 35px;">
+    <a href="Dashboard.dc.html" style="font-family:var(--font-heading);font-size:20px;text-decoration:none;color:var(--color-text);margin-right:auto;">Stride</a>
+    <a href="Dashboard.dc.html" style="font-size:14px;text-decoration:none;color:var(--color-text);">Dashboard</a>
+    <a href="History.dc.html" style="font-size:14px;text-decoration:none;color:var(--color-text);">History</a>
+    <a href="Routines.dc.html" style="font-size:14px;text-decoration:none;color:var(--color-accent);font-weight:600;">Routines</a>
+  </div>
+
+  <div style="padding:0 35px 60px;max-width:960px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;">
+      <div>
+        <h1 style="font-family:var(--font-heading);font-weight:400;font-size:28px;margin:0 0 6px;">Routines</h1>
+        <p style="font-size:14px;color:color-mix(in srgb, var(--color-text) 60%, transparent);margin:0;">Save workout templates to auto-fill your log in one tap.</p>
+      </div>
+      <button onclick="{{ handleOpenAdd }}" style="cursor:pointer;flex:none;font-family:var(--font-heading);font-size:14px;background:var(--color-accent);color:var(--color-bg);border:none;padding:11px 22px;border-radius:999px;">+ New routine</button>
+    </div>
+
+    <sc-if value="{{ hasTemplates }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:18px;">
+        <sc-for list="{{ templates }}" as="t" hint-placeholder-count="3">
+          <div style="background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);padding:22px;box-shadow:var(--shadow-md);display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+              <div style="font-family:var(--font-heading);font-size:17px;">{{ t.name }}</div>
+              <div style="display:flex;gap:6px;flex:none;">
+                <button onclick="{{ t.onEdit }}" aria-label="Edit routine" style="cursor:pointer;width:30px;height:30px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;padding:0;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
+                </button>
+                <button onclick="{{ t.onDelete }}" aria-label="Delete routine" style="cursor:pointer;width:30px;height:30px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;padding:0;font-size:14px;">&times;</button>
+              </div>
+            </div>
+            <div style="font-size:13px;color:color-mix(in srgb, var(--color-text) 65%, transparent);">{{ t.exercise }}</div>
+            <div style="display:flex;gap:10px;font-size:12px;color:color-mix(in srgb, var(--color-text) 55%, transparent);flex-wrap:wrap;">
+              <span>{{ t.reps }}</span>
+              <span>&middot;</span>
+              <span>{{ t.weight }}</span>
+              <span>&middot;</span>
+              <span>{{ t.distance }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hasNoTemplates }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);padding:44px;text-align:center;color:color-mix(in srgb, var(--color-text) 60%, transparent);font-size:14px;">
+        No routines yet. Create one to speed up logging your workouts.
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ showModal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(32,30,29,0.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:22px;">
+      <div style="background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);box-shadow:var(--shadow-lg);width:100%;max-width:440px;max-height:85vh;overflow-y:auto;padding:26.4px;display:flex;flex-direction:column;gap:14px;">
+        <div style="font-family:var(--font-heading);font-size:19px;">{{ modalTitle }}</div>
+
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Routine name</label>
+          <input class="__no_class" value="{{ draft.name }}" oninput="{{ handleField_name }}" placeholder="e.g. Push day" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Exercise / machine</label>
+          <input class="__no_class" value="{{ draft.exercise }}" oninput="{{ handleField_exercise }}" placeholder="e.g. Bench press" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <div style="flex:1;">
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Reps &amp; sets</label>
+            <input class="__no_class" value="{{ draft.reps }}" oninput="{{ handleField_reps }}" placeholder="e.g. 4x10" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+          </div>
+          <div style="flex:1;">
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Weight</label>
+            <input class="__no_class" value="{{ draft.weight }}" oninput="{{ handleField_weight }}" placeholder="e.g. 135 lbs" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Distance</label>
+          <input class="__no_class" value="{{ draft.distance }}" oninput="{{ handleField_distance }}" placeholder="e.g. 2.4 mi" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Effort (RPE {{ draft.rpe }}/10)</label>
+          <input class="__no_class" type="range" min="1" max="10" value="{{ draft.rpe }}" oninput="{{ handleField_rpe }}" style="width:100%;accent-color:var(--color-accent);"></input>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Notes</label>
+          <textarea class="__no_class" value="{{ draft.notes }}" oninput="{{ handleField_notes }}" placeholder="Cues, target machine, etc." style="width:100%;min-height:70px;padding:10px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:16px;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+        </div>
+
+        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:6px;">
+          <button onclick="{{ handleCloseModal }}" style="cursor:pointer;font-family:var(--font-heading);font-size:14px;background:transparent;border:1px solid var(--color-divider);color:var(--color-text);padding:11px 22px;border-radius:999px;">Cancel</button>
+          <button onclick="{{ handleSave }}" style="cursor:pointer;font-family:var(--font-heading);font-size:14px;background:var(--color-accent);color:var(--color-bg);border:none;padding:11px 26px;border-radius:999px;">Save routine</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const STORAGE_KEY = "stride-routine-templates";
+const DEFAULT_TEMPLATES = [
+  { id: "t1", name: "Push day", exercise: "Bench press", reps: "4x10", weight: "135 lbs", distance: "—", rpe: 7, notes: "Warm up with 2 light sets first." },
+  { id: "t2", name: "5k run", exercise: "Treadmill", reps: "—", weight: "—", distance: "3.1 mi", rpe: 6, notes: "Steady pace, negative split last mile." },
+  { id: "t3", name: "Leg day", exercise: "Back squat", reps: "5x8", weight: "185 lbs", distance: "—", rpe: 8, notes: "Focus on depth, controlled tempo." },
+];
+
+function loadTemplates() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return DEFAULT_TEMPLATES.slice();
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length ? parsed : DEFAULT_TEMPLATES.slice();
+  } catch (e) {
+    return DEFAULT_TEMPLATES.slice();
+  }
+}
+function saveTemplates(templates) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(templates)); } catch (e) {}
+}
+
+class Component extends DCLogic {
+  state = { templates: loadTemplates(), showModal: false, draft: null, editingId: null };
+
+  componentDidMount() {
+    if (!localStorage.getItem(STORAGE_KEY)) saveTemplates(this.state.templates);
+  }
+
+  handleOpenAdd = () => this.setState({
+    showModal: true, editingId: null,
+    draft: { name: "", exercise: "", reps: "", weight: "", distance: "", rpe: 5, notes: "" },
+  });
+  handleOpenEdit = (id) => () => {
+    const t = this.state.templates.find((x) => x.id === id);
+    this.setState({ showModal: true, editingId: id, draft: { ...t } });
+  };
+  handleDelete = (id) => () => {
+    this.setState((s) => {
+      const templates = s.templates.filter((t) => t.id !== id);
+      saveTemplates(templates);
+      return { templates };
+    });
+  };
+  handleCloseModal = () => this.setState({ showModal: false, draft: null, editingId: null });
+
+  handleField = (field) => (e) => {
+    const value = e.target.value;
+    this.setState((s) => ({ draft: { ...s.draft, [field]: value } }));
+  };
+  handleField_name = this.handleField("name");
+  handleField_exercise = this.handleField("exercise");
+  handleField_reps = this.handleField("reps");
+  handleField_weight = this.handleField("weight");
+  handleField_distance = this.handleField("distance");
+  handleField_rpe = this.handleField("rpe");
+  handleField_notes = this.handleField("notes");
+
+  handleSave = () => {
+    this.setState((s) => {
+      const name = (s.draft.name || "").trim() || "Untitled routine";
+      const cleaned = {
+        ...s.draft, name,
+        reps: s.draft.reps || "—", weight: s.draft.weight || "—", distance: s.draft.distance || "—",
+      };
+      let templates;
+      if (s.editingId) {
+        templates = s.templates.map((t) => (t.id === s.editingId ? { ...cleaned, id: s.editingId } : t));
+      } else {
+        templates = [...s.templates, { ...cleaned, id: "t" + Date.now() }];
+      }
+      saveTemplates(templates);
+      return { templates, showModal: false, draft: null, editingId: null };
+    });
+  };
+
+  renderVals() {
+    const s = this.state;
+    return {
+      templates: s.templates.map((t) => ({
+        name: t.name, exercise: t.exercise, reps: t.reps, weight: t.weight, distance: t.distance,
+        onEdit: this.handleOpenEdit(t.id),
+        onDelete: this.handleDelete(t.id),
+      })),
+      hasTemplates: s.templates.length > 0,
+      hasNoTemplates: s.templates.length === 0,
+      showModal: s.showModal,
+      modalTitle: s.editingId ? "Edit routine" : "New routine",
+      draft: s.draft || {},
+      handleOpenAdd: this.handleOpenAdd,
+      handleCloseModal: this.handleCloseModal,
+      handleSave: this.handleSave,
+      handleField_name: this.handleField_name,
+      handleField_exercise: this.handleField_exercise,
+      handleField_reps: this.handleField_reps,
+      handleField_weight: this.handleField_weight,
+      handleField_distance: this.handleField_distance,
+      handleField_rpe: this.handleField_rpe,
+      handleField_notes: this.handleField_notes,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

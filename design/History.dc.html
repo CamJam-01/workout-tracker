@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<template id="__bundler_thumbnail" data-bg-color="#f5ead8">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f5ead8"/>
+    <circle cx="600" cy="360" r="150" fill="#c67139"/>
+    <rect x="520" y="330" width="160" height="60" rx="30" fill="#f5ead8"/>
+  </svg>
+</template>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="stylesheet" href="_ds/organic-4c858df5-76c5-4f95-8847-15279404b8d8/styles.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  a { color: var(--color-accent); }
+  a:hover { color: var(--color-accent-700); }
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);">
+
+  <div style="display:flex;align-items:center;gap:17.6px;padding:17.6px 35px;">
+    <a href="Dashboard.dc.html" style="font-family:var(--font-heading);font-size:20px;text-decoration:none;color:var(--color-text);margin-right:auto;">Stride</a>
+    <a href="Routines.dc.html" style="font-size:14px;text-decoration:none;color:var(--color-text);">Routines</a>
+    <a href="Dashboard.dc.html" style="font-size:14px;text-decoration:none;color:var(--color-text);">&larr; Dashboard</a>
+  </div>
+
+  <div style="padding:0 35px 60px;">
+    <h1 style="font-family:var(--font-heading);font-weight:400;font-size:28px;margin:0 0 6px;">Workout history</h1>
+    <p style="font-size:14px;color:color-mix(in srgb, var(--color-text) 60%, transparent);margin:0 0 28px;">{{ workoutCount }} workouts logged so far.</p>
+
+    <div style="display:grid;grid-template-columns:minmax(260px,340px) 1fr minmax(260px,340px);gap:22px;align-items:start;">
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <sc-for list="{{ workouts }}" as="w" hint-placeholder-count="6">
+          <div onclick="{{ w.select }}" style="cursor:pointer;background:{{ w.bg }};border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;border:1px solid {{ w.border }};">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;">
+              <span style="font-family:var(--font-heading);font-size:15px;">{{ w.title }}</span>
+              <span style="font-size:11px;color:color-mix(in srgb, var(--color-text) 50%, transparent);">{{ w.date }}</span>
+            </div>
+            <div style="display:flex;gap:10px;font-size:12px;color:color-mix(in srgb, var(--color-text) 60%, transparent);">
+              <span>{{ w.duration }}</span>
+              <span>&middot;</span>
+              <span>{{ w.summary }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="position:relative;background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);padding:32px;box-shadow:var(--shadow-md);display:flex;flex-direction:column;gap:18px;">
+
+        <sc-if value="{{ hasSelectedWorkout }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent);margin-bottom:4px;">{{ selected.date }}</div>
+              <div style="font-family:var(--font-heading);font-size:24px;">{{ selected.title }}</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:var(--font-heading);font-size:24px;font-variant-numeric:tabular-nums;">{{ selected.duration }}</div>
+              <div style="font-size:11px;color:color-mix(in srgb, var(--color-text) 50%, transparent);">duration</div>
+            </div>
+          </div>
+          <button onclick="{{ handleOpenEdit }}" aria-label="Edit workout" style="cursor:pointer;position:absolute;right:20px;bottom:20px;width:38px;height:38px;border-radius:999px;border:none;background:var(--color-accent);color:var(--color-bg);display:flex;align-items:center;justify-content:center;padding:0;box-shadow:var(--shadow-md);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
+          </button>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));gap:16px;">
+            <div>
+              <div style="font-size:11px;color:color-mix(in srgb, var(--color-text) 55%, transparent);margin-bottom:2px;">Reps &amp; sets</div>
+              <div style="font-size:15px;font-weight:700;">{{ selected.reps }}</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:color-mix(in srgb, var(--color-text) 55%, transparent);margin-bottom:2px;">Weight</div>
+              <div style="font-size:15px;font-weight:700;">{{ selected.weight }}</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:color-mix(in srgb, var(--color-text) 55%, transparent);margin-bottom:2px;">Distance</div>
+              <div style="font-size:15px;font-weight:700;">{{ selected.distance }}</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:color-mix(in srgb, var(--color-text) 55%, transparent);margin-bottom:2px;">Effort (RPE)</div>
+              <div style="font-size:15px;font-weight:700;">{{ selected.rpe }}/10</div>
+            </div>
+          </div>
+
+          <sc-if value="{{ hasLaps }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="font-size:11px;color:color-mix(in srgb, var(--color-text) 55%, transparent);margin-bottom:8px;">Splits</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <sc-for list="{{ selectedLaps }}" as="lap" hint-placeholder-count="0">
+                  <div style="background:var(--color-neutral-100);border-radius:14px;padding:6px 12px;font-size:12px;display:flex;gap:6px;">
+                    <span style="color:color-mix(in srgb, var(--color-text) 55%, transparent);">{{ lap.label }}</span>
+                    <span style="font-weight:700;font-variant-numeric:tabular-nums;">{{ lap.time }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <div>
+            <div style="font-size:11px;color:color-mix(in srgb, var(--color-text) 55%, transparent);margin-bottom:4px;">Notes</div>
+            <p style="font-size:14px;line-height:1.6;margin:0;color:color-mix(in srgb, var(--color-text) 80%, transparent);">{{ selected.notes }}</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasNoSelectedWorkout }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent);">{{ selectedDateLabel }}</div>
+            <div style="font-family:var(--font-heading);font-size:22px;">No workouts logged</div>
+            <p style="font-size:14px;line-height:1.6;margin:6px 0 0;color:color-mix(in srgb, var(--color-text) 60%, transparent);">Nothing recorded for this day yet.</p>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);padding:20px;box-shadow:var(--shadow-md);display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <button onclick="{{ prevMonth }}" style="cursor:pointer;background:transparent;border:none;font-size:16px;color:var(--color-text);padding:4px 8px;">&lsaquo;</button>
+          <div style="font-family:var(--font-heading);font-size:14px;">{{ monthLabel }}</div>
+          <button onclick="{{ nextMonth }}" style="cursor:pointer;background:transparent;border:none;font-size:16px;color:var(--color-text);padding:4px 8px;">&rsaquo;</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:10px;text-align:center;color:color-mix(in srgb, var(--color-text) 55%, transparent);">
+          <sc-for list="{{ weekdayLabels }}" as="wd" hint-placeholder-count="7">
+            <div>{{ wd }}</div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">
+          <sc-for list="{{ calendarCells }}" as="cell" hint-placeholder-count="35">
+            <div onclick="{{ cell.click }}" style="cursor:pointer;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;font-size:12px;background:{{ cell.bg }};color:{{ cell.color }};position:relative;">
+              <span>{{ cell.day }}</span>
+              <sc-if value="{{ cell.hasWorkout }}" hint-placeholder-val="{{ false }}">
+                <div style="width:5px;height:5px;border-radius:50%;background:{{ cell.dotColor }};position:absolute;bottom:5px;"></div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+
+        <button onclick="{{ handleOpenAdd }}" style="cursor:pointer;font-family:var(--font-heading);font-size:13px;background:var(--color-accent);color:var(--color-bg);border:none;padding:9px 14px;border-radius:999px;">+ Add workout</button>
+
+        <sc-if value="{{ hasSameDayWorkouts }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:6px;padding-top:10px;border-top:1px solid var(--color-divider);">
+            <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb, var(--color-text) 55%, transparent);">Logged that day</div>
+            <sc-for list="{{ sameDayWorkouts }}" as="sw" hint-placeholder-count="0">
+              <button onclick="{{ sw.select }}" style="cursor:pointer;text-align:left;border:none;background:{{ sw.bg }};color:var(--color-text);font-size:12px;padding:8px 10px;border-radius:10px;">{{ sw.title }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+    </div>
+  </div>
+
+  <sc-if value="{{ showEditModal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(32,30,29,0.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:22px;">
+      <div style="background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);box-shadow:var(--shadow-lg);width:100%;max-width:460px;max-height:85vh;overflow-y:auto;padding:26.4px;display:flex;flex-direction:column;gap:14px;">
+        <div style="font-family:var(--font-heading);font-size:19px;">Edit workout</div>
+
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Title</label>
+          <input class="__no_class" value="{{ editDraft.title }}" oninput="{{ handleEditField_title }}" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <div style="flex:1;">
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Duration</label>
+            <input class="__no_class" value="{{ editDraft.duration }}" oninput="{{ handleEditField_duration }}" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+          </div>
+          <div style="flex:1;">
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Effort (RPE)</label>
+            <input class="__no_class" type="number" min="1" max="10" value="{{ editDraft.rpe }}" oninput="{{ handleEditField_rpe }}" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <div style="flex:1;">
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Reps &amp; sets</label>
+            <input class="__no_class" value="{{ editDraft.reps }}" oninput="{{ handleEditField_reps }}" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+          </div>
+          <div style="flex:1;">
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Weight</label>
+            <input class="__no_class" value="{{ editDraft.weight }}" oninput="{{ handleEditField_weight }}" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Distance</label>
+          <input class="__no_class" value="{{ editDraft.distance }}" oninput="{{ handleEditField_distance }}" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Notes</label>
+          <textarea class="__no_class" value="{{ editDraft.notes }}" oninput="{{ handleEditField_notes }}" style="width:100%;min-height:80px;padding:10px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:16px;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+        </div>
+
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Splits</label>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <sc-for list="{{ editLaps }}" as="lap" hint-placeholder-count="0">
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input class="__no_class" value="{{ lap.label }}" oninput="{{ lap.onLabelChange }}" placeholder="Label" style="flex:1;min-height:36px;padding:6px 14px;font-size:13px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+                <input class="__no_class" value="{{ lap.time }}" oninput="{{ lap.onTimeChange }}" placeholder="mm:ss" style="width:90px;min-height:36px;padding:6px 14px;font-size:13px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+                <button onclick="{{ lap.onRemove }}" aria-label="Remove split" style="cursor:pointer;flex:none;width:32px;height:32px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);font-size:15px;">&times;</button>
+              </div>
+            </sc-for>
+          </div>
+          <button onclick="{{ handleAddLap }}" style="cursor:pointer;margin-top:8px;font-family:var(--font-heading);font-size:13px;color:var(--color-accent);background:transparent;border:none;padding:4px 0;">+ Add split</button>
+        </div>
+
+        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:6px;">
+          <button onclick="{{ handleCloseEdit }}" style="cursor:pointer;font-family:var(--font-heading);font-size:14px;background:transparent;border:1px solid var(--color-divider);color:var(--color-text);padding:11px 22px;border-radius:999px;">Cancel</button>
+          <button onclick="{{ handleSaveEdit }}" style="cursor:pointer;font-family:var(--font-heading);font-size:14px;background:var(--color-accent);color:var(--color-bg);border:none;padding:11px 26px;border-radius:999px;">Save</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showAddModal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(32,30,29,0.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:22px;">
+      <div style="background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);box-shadow:var(--shadow-lg);width:100%;max-width:460px;max-height:85vh;overflow-y:auto;padding:26.4px;display:flex;flex-direction:column;gap:14px;">
+        <div>
+          <div style="font-family:var(--font-heading);font-size:19px;">Add workout</div>
+          <div style="font-size:13px;color:color-mix(in srgb, var(--color-text) 60%, transparent);margin-top:4px;">{{ addDateLabel }}</div>
+        </div>
+
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Title</label>
+          <input class="__no_class" value="{{ addDraft.title }}" oninput="{{ handleAddField_title }}" placeholder="e.g. Evening run" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <div style="flex:1;">
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Duration</label>
+            <input class="__no_class" value="{{ addDraft.duration }}" oninput="{{ handleAddField_duration }}" placeholder="mm:ss" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+          </div>
+          <div style="flex:1;">
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Effort (RPE)</label>
+            <input class="__no_class" type="number" min="1" max="10" value="{{ addDraft.rpe }}" oninput="{{ handleAddField_rpe }}" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <div style="flex:1;">
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Reps &amp; sets</label>
+            <input class="__no_class" value="{{ addDraft.reps }}" oninput="{{ handleAddField_reps }}" placeholder="e.g. 3x12" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+          </div>
+          <div style="flex:1;">
+            <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Weight</label>
+            <input class="__no_class" value="{{ addDraft.weight }}" oninput="{{ handleAddField_weight }}" placeholder="e.g. 135 lbs" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Distance</label>
+          <input class="__no_class" value="{{ addDraft.distance }}" oninput="{{ handleAddField_distance }}" placeholder="e.g. 2.4 mi" style="width:100%;min-height:36px;padding:6px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Notes</label>
+          <textarea class="__no_class" value="{{ addDraft.notes }}" oninput="{{ handleAddField_notes }}" placeholder="How did it feel?" style="width:100%;min-height:80px;padding:10px 14px;font-size:14px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:16px;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+        </div>
+
+        <div>
+          <label style="display:block;font-size:12px;margin-bottom:5px;color:color-mix(in srgb, var(--color-text) 70%, transparent);">Splits</label>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <sc-for list="{{ addLaps }}" as="lap" hint-placeholder-count="0">
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input class="__no_class" value="{{ lap.label }}" oninput="{{ lap.onLabelChange }}" placeholder="Label" style="flex:1;min-height:36px;padding:6px 14px;font-size:13px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+                <input class="__no_class" value="{{ lap.time }}" oninput="{{ lap.onTimeChange }}" placeholder="mm:ss" style="width:90px;min-height:36px;padding:6px 14px;font-size:13px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:999px;box-sizing:border-box;"></input>
+                <button onclick="{{ lap.onRemove }}" aria-label="Remove split" style="cursor:pointer;flex:none;width:32px;height:32px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);font-size:15px;">&times;</button>
+              </div>
+            </sc-for>
+          </div>
+          <button onclick="{{ handleAddLapDraft }}" style="cursor:pointer;margin-top:8px;font-family:var(--font-heading);font-size:13px;color:var(--color-accent);background:transparent;border:none;padding:4px 0;">+ Add split</button>
+        </div>
+
+        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:6px;">
+          <button onclick="{{ handleCloseAdd }}" style="cursor:pointer;font-family:var(--font-heading);font-size:14px;background:transparent;border:1px solid var(--color-divider);color:var(--color-text);padding:11px 22px;border-radius:999px;">Cancel</button>
+          <button onclick="{{ handleSaveAdd }}" style="cursor:pointer;font-family:var(--font-heading);font-size:14px;background:var(--color-accent);color:var(--color-bg);border:none;padding:11px 26px;border-radius:999px;">Add workout</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const WORKOUTS = [
+  { title: "Upper body strength", date: "Aug 6", iso: "2026-08-06", duration: "48:12", reps: "4x10", weight: "135 lbs", distance: "—", rpe: 7,
+    notes: "Felt strong on bench, shoulders a little tight by the last set.",
+    laps: [{ label: "Lap 1", time: "12:04" }, { label: "Lap 2", time: "11:40" }, { label: "Lap 3", time: "12:55" }, { label: "Lap 4", time: "11:33" }] },
+  { title: "Morning run", date: "Aug 5", iso: "2026-08-05", duration: "31:07", reps: "—", weight: "—", distance: "3.4 mi", rpe: 6,
+    notes: "Easy pace, legs recovered well from Tuesday.", laps: [] },
+  { title: "Leg day", date: "Aug 3", iso: "2026-08-03", duration: "55:20", reps: "5x8", weight: "185 lbs", distance: "—", rpe: 8,
+    notes: "New squat max attempt, felt heavy but controlled.",
+    laps: [{ label: "Lap 1", time: "18:10" }, { label: "Lap 2", time: "19:02" }, { label: "Lap 3", time: "18:08" }] },
+  { title: "Evening stretch", date: "Aug 3", iso: "2026-08-03", duration: "15:00", reps: "—", weight: "—", distance: "—", rpe: 2,
+    notes: "Light mobility work after leg day.", laps: [] },
+  { title: "Evening walk", date: "Aug 1", iso: "2026-08-01", duration: "40:00", reps: "—", weight: "—", distance: "2.1 mi", rpe: 3,
+    notes: "Recovery day, kept it light and easy.", laps: [] },
+  { title: "Full body circuit", date: "Jul 30", iso: "2026-07-30", duration: "38:45", reps: "3x15", weight: "95 lbs", distance: "—", rpe: 7,
+    notes: "Good energy today, finished all rounds without dropping weight.",
+    laps: [{ label: "Lap 1", time: "13:02" }, { label: "Lap 2", time: "12:50" }, { label: "Lap 3", time: "12:53" }] },
+  { title: "Swim", date: "Jul 28", iso: "2026-07-28", duration: "26:30", reps: "—", weight: "—", distance: "1200 m", rpe: 6,
+    notes: "Focused on breathing technique this session.", laps: [] },
+];
+
+function pad2(n) { return String(n).padStart(2, "0"); }
+
+class Component extends DCLogic {
+  state = { workoutsData: WORKOUTS.map((w) => ({ ...w })), selectedIdx: 0, selectedIso: WORKOUTS[0].iso, calYear: 2026, calMonth: 7, showEditModal: false, editDraft: null, showAddModal: false, addDraft: null };
+
+  select = (i) => () => this.setState((s) => ({ selectedIdx: i, selectedIso: s.workoutsData[i].iso }));
+
+  handleDayClick = (iso) => () => {
+    const idx = this.state.workoutsData.findIndex((w) => w.iso === iso);
+    this.setState({ selectedIdx: idx, selectedIso: iso });
+  };
+
+  handleOpenEdit = () => {
+    const w = this.state.workoutsData[this.state.selectedIdx];
+    this.setState({ showEditModal: true, editDraft: { ...w, laps: w.laps.map((l) => ({ ...l })) } });
+  };
+  handleCloseEdit = () => this.setState({ showEditModal: false, editDraft: null });
+  handleEditField = (field) => (e) => {
+    const value = e.target.value;
+    this.setState((s) => ({ editDraft: { ...s.editDraft, [field]: value } }));
+  };
+  handleEditField_title = this.handleEditField("title");
+  handleEditField_duration = this.handleEditField("duration");
+  handleEditField_rpe = this.handleEditField("rpe");
+  handleEditField_reps = this.handleEditField("reps");
+  handleEditField_weight = this.handleEditField("weight");
+  handleEditField_distance = this.handleEditField("distance");
+  handleEditField_notes = this.handleEditField("notes");
+  handleEditLapField = (idx, field) => (e) => {
+    const value = e.target.value;
+    this.setState((s) => {
+      const laps = s.editDraft.laps.slice();
+      laps[idx] = { ...laps[idx], [field]: value };
+      return { editDraft: { ...s.editDraft, laps } };
+    });
+  };
+  handleAddLap = () => {
+    this.setState((s) => ({
+      editDraft: { ...s.editDraft, laps: [...s.editDraft.laps, { label: "Lap " + (s.editDraft.laps.length + 1), time: "" }] },
+    }));
+  };
+  handleRemoveLap = (idx) => () => {
+    this.setState((s) => ({ editDraft: { ...s.editDraft, laps: s.editDraft.laps.filter((_, i) => i !== idx) } }));
+  };
+  handleSaveEdit = () => {
+    this.setState((s) => {
+      const workoutsData = s.workoutsData.slice();
+      workoutsData[s.selectedIdx] = { ...workoutsData[s.selectedIdx], ...s.editDraft };
+      return { workoutsData, showEditModal: false, editDraft: null };
+    });
+  };
+
+  handleOpenAdd = () => {
+    this.setState({
+      showAddModal: true,
+      addDraft: { title: "", duration: "", reps: "", weight: "", distance: "", rpe: 5, notes: "", laps: [] },
+    });
+  };
+  handleCloseAdd = () => this.setState({ showAddModal: false, addDraft: null });
+  handleAddField = (field) => (e) => {
+    const value = e.target.value;
+    this.setState((s) => ({ addDraft: { ...s.addDraft, [field]: value } }));
+  };
+  handleAddField_title = this.handleAddField("title");
+  handleAddField_duration = this.handleAddField("duration");
+  handleAddField_rpe = this.handleAddField("rpe");
+  handleAddField_reps = this.handleAddField("reps");
+  handleAddField_weight = this.handleAddField("weight");
+  handleAddField_distance = this.handleAddField("distance");
+  handleAddField_notes = this.handleAddField("notes");
+  handleAddLapField = (idx, field) => (e) => {
+    const value = e.target.value;
+    this.setState((s) => {
+      const laps = s.addDraft.laps.slice();
+      laps[idx] = { ...laps[idx], [field]: value };
+      return { addDraft: { ...s.addDraft, laps } };
+    });
+  };
+  handleAddLapDraft = () => {
+    this.setState((s) => ({
+      addDraft: { ...s.addDraft, laps: [...s.addDraft.laps, { label: "Lap " + (s.addDraft.laps.length + 1), time: "" }] },
+    }));
+  };
+  handleRemoveAddLap = (idx) => () => {
+    this.setState((s) => ({ addDraft: { ...s.addDraft, laps: s.addDraft.laps.filter((_, i) => i !== idx) } }));
+  };
+  handleSaveAdd = () => {
+    this.setState((s) => {
+      const iso = s.selectedIso;
+      const dateObj = new Date(iso + "T00:00:00");
+      const dateLabel = dateObj.toLocaleString("en-US", { month: "short", day: "numeric" });
+      const newWorkout = { ...s.addDraft, iso, date: dateLabel, reps: s.addDraft.reps || "—", weight: s.addDraft.weight || "—", distance: s.addDraft.distance || "—", duration: s.addDraft.duration || "0:00" };
+      const workoutsData = [...s.workoutsData, newWorkout];
+      return { workoutsData, showAddModal: false, addDraft: null, selectedIdx: workoutsData.length - 1 };
+    });
+  };
+
+  prevMonth = () => this.setState((s) => {
+    let m = s.calMonth - 1, y = s.calYear;
+    if (m < 0) { m = 11; y -= 1; }
+    return { calMonth: m, calYear: y };
+  });
+  nextMonth = () => this.setState((s) => {
+    let m = s.calMonth + 1, y = s.calYear;
+    if (m > 11) { m = 0; y += 1; }
+    return { calMonth: m, calYear: y };
+  });
+
+  renderVals() {
+    const selectedIdx = this.state.selectedIdx;
+    const selectedIso = this.state.selectedIso;
+    const WORKOUTS = this.state.workoutsData;
+    const workouts = WORKOUTS.map((w, i) => ({ w, i }))
+      .filter(({ w }) => w.iso === selectedIso)
+      .map(({ w, i }) => ({
+        title: w.title, date: w.date, duration: w.duration,
+        summary: w.distance !== "—" ? w.distance : (w.weight !== "—" ? w.weight : "recovery"),
+        select: this.select(i),
+        bg: i === selectedIdx ? "var(--color-accent-2-200)" : "var(--color-surface)",
+        border: i === selectedIdx ? "var(--color-accent-2-300)" : "transparent",
+      }));
+    const selected = selectedIdx >= 0 ? WORKOUTS[selectedIdx] : null;
+
+    const sameDayIndices = WORKOUTS.map((w, i) => i).filter((i) => WORKOUTS[i].iso === selectedIso);
+    const sameDayWorkouts = sameDayIndices.length > 1 ? sameDayIndices.map((i) => ({
+      title: WORKOUTS[i].title,
+      select: this.select(i),
+      bg: i === selectedIdx ? "var(--color-accent-2-200)" : "transparent",
+    })) : [];
+
+    const calYear = this.state.calYear, calMonth = this.state.calMonth;
+    const workoutDates = new Set(WORKOUTS.map((w) => w.iso));
+    const firstDay = new Date(calYear, calMonth, 1);
+    const startWeekday = firstDay.getDay();
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const monthLabel = firstDay.toLocaleString("en-US", { month: "long", year: "numeric" });
+
+    const calendarCells = [];
+    for (let i = 0; i < startWeekday; i++) {
+      calendarCells.push({ day: "", hasWorkout: false, cursor: "default", click: () => {}, bg: "transparent", color: "var(--color-text)", dotColor: "" });
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const iso = calYear + "-" + pad2(calMonth + 1) + "-" + pad2(d);
+      const hasWorkout = workoutDates.has(iso);
+      const isSelected = iso === selectedIso;
+      calendarCells.push({
+        day: d, hasWorkout,
+        cursor: "pointer",
+        click: this.handleDayClick(iso),
+        bg: isSelected ? "var(--color-accent)" : (hasWorkout ? "var(--color-accent-100)" : "transparent"),
+        color: isSelected ? "var(--color-bg)" : "var(--color-text)",
+        dotColor: isSelected ? "var(--color-bg)" : "var(--color-accent)",
+      });
+    }
+
+    const selectedDateObj = selectedIso ? new Date(selectedIso + "T00:00:00") : null;
+    const selectedDateLabel = selectedDateObj ? selectedDateObj.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "";
+
+    return {
+      workoutCount: WORKOUTS.length,
+      workouts,
+      selected,
+      hasSelectedWorkout: !!selected,
+      hasNoSelectedWorkout: !selected,
+      selectedDateLabel,
+      hasLaps: selected ? selected.laps.length > 0 : false,
+      selectedLaps: selected ? selected.laps : [],
+      monthLabel,
+      showEditModal: this.state.showEditModal,
+      editDraft: this.state.editDraft || {},
+      editLaps: (this.state.editDraft && this.state.editDraft.laps ? this.state.editDraft.laps : []).map((lap, i) => ({
+        label: lap.label, time: lap.time,
+        onLabelChange: this.handleEditLapField(i, "label"),
+        onTimeChange: this.handleEditLapField(i, "time"),
+        onRemove: this.handleRemoveLap(i),
+      })),
+      handleAddLap: this.handleAddLap,
+      handleOpenEdit: this.handleOpenEdit,
+      handleCloseEdit: this.handleCloseEdit,
+      handleSaveEdit: this.handleSaveEdit,
+      handleEditField_title: this.handleEditField_title,
+      handleEditField_duration: this.handleEditField_duration,
+      handleEditField_rpe: this.handleEditField_rpe,
+      handleEditField_reps: this.handleEditField_reps,
+      handleEditField_weight: this.handleEditField_weight,
+      handleEditField_distance: this.handleEditField_distance,
+      handleEditField_notes: this.handleEditField_notes,
+      showAddModal: this.state.showAddModal,
+      addDraft: this.state.addDraft || {},
+      addDateLabel: selectedDateLabel,
+      addLaps: (this.state.addDraft && this.state.addDraft.laps ? this.state.addDraft.laps : []).map((lap, i) => ({
+        label: lap.label, time: lap.time,
+        onLabelChange: this.handleAddLapField(i, "label"),
+        onTimeChange: this.handleAddLapField(i, "time"),
+        onRemove: this.handleRemoveAddLap(i),
+      })),
+      handleAddLapDraft: this.handleAddLapDraft,
+      handleOpenAdd: this.handleOpenAdd,
+      handleCloseAdd: this.handleCloseAdd,
+      handleSaveAdd: this.handleSaveAdd,
+      handleAddField_title: this.handleAddField_title,
+      handleAddField_duration: this.handleAddField_duration,
+      handleAddField_rpe: this.handleAddField_rpe,
+      handleAddField_reps: this.handleAddField_reps,
+      handleAddField_weight: this.handleAddField_weight,
+      handleAddField_distance: this.handleAddField_distance,
+      handleAddField_notes: this.handleAddField_notes,
+      weekdayLabels: ["S", "M", "T", "W", "T", "F", "S"],
+      calendarCells,
+      prevMonth: this.prevMonth,
+      nextMonth: this.nextMonth,
+      hasSameDayWorkouts: sameDayWorkouts.length > 0,
+      sameDayWorkouts,
+    };
+  }
+}
+
+</script>
+</body>
+</html>
