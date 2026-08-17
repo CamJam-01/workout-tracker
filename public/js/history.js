@@ -43,7 +43,8 @@
 
   const state = {
     workouts: [],
-    selectedIdx: 0,
+    selectedIso: null,
+    selectedWorkoutId: null,
     calYear: new Date().getFullYear(),
     calMonth: new Date().getMonth(),
     addDraft: null,
@@ -55,14 +56,20 @@
 
   const el = (id) => document.getElementById(id);
 
-  function selectByIndex(idx) {
-    state.selectedIdx = idx;
+  function workoutsForIso(iso) {
+    return state.workouts.filter((w) => w.isoDate === iso);
+  }
+
+  function selectIso(iso) {
+    state.selectedIso = iso;
+    const dayWorkouts = workoutsForIso(iso);
+    state.selectedWorkoutId = dayWorkouts.length ? dayWorkouts[0].id : null;
     render();
   }
 
-  function selectByIso(iso) {
-    const idx = state.workouts.findIndex((w) => w.isoDate === iso);
-    if (idx >= 0) selectByIndex(idx);
+  function selectWorkoutById(id) {
+    state.selectedWorkoutId = id;
+    render();
   }
 
   function renderSub() {
@@ -75,11 +82,16 @@
       listEl.innerHTML = '<div class="empty-note">No workouts yet — start the stopwatch on your Dashboard to log your first one.</div>';
       return;
     }
-    listEl.innerHTML = state.workouts
-      .map((w, i) => {
+    const dayWorkouts = workoutsForIso(state.selectedIso);
+    if (dayWorkouts.length === 0) {
+      listEl.innerHTML = '<div class="empty-note">No workouts logged for this date yet.</div>';
+      return;
+    }
+    listEl.innerHTML = dayWorkouts
+      .map((w) => {
         const summary = w.distance || w.weight || "recovery";
-        const selected = i === state.selectedIdx;
-        return `<div class="workout-item${selected ? " selected" : ""}" data-idx="${i}">
+        const selected = w.id === state.selectedWorkoutId;
+        return `<div class="workout-item${selected ? " selected" : ""}" data-id="${w.id}">
           <div class="workout-item-top">
             <span class="workout-item-title">${escapeHtml(w.title)}</span>
             <span class="workout-item-date">${formatDateLabel(w.isoDate)}</span>
@@ -92,8 +104,8 @@
         </div>`;
       })
       .join("");
-    listEl.querySelectorAll("[data-idx]").forEach((node) => {
-      node.addEventListener("click", () => selectByIndex(Number(node.getAttribute("data-idx"))));
+    listEl.querySelectorAll("[data-id]").forEach((node) => {
+      node.addEventListener("click", () => selectWorkoutById(Number(node.getAttribute("data-id"))));
     });
   }
 
@@ -108,13 +120,18 @@
   }
 
   function renderDetail() {
-    const card = el("detail-card");
-    if (state.workouts.length === 0) {
-      card.style.display = "none";
+    const w = state.workouts.find((x) => x.id === state.selectedWorkoutId);
+    const emptyEl = el("detail-empty");
+    const contentEl = el("detail-content");
+    if (!w) {
+      emptyEl.style.display = "flex";
+      contentEl.style.display = "none";
+      el("detail-empty-date").textContent = state.selectedIso ? formatDateLabel(state.selectedIso) : "";
       return;
     }
-    card.style.display = "flex";
-    const w = state.workouts[state.selectedIdx];
+    emptyEl.style.display = "none";
+    contentEl.style.display = "flex";
+
     el("detail-date").textContent = formatDateLabel(w.isoDate);
     el("detail-title").textContent = w.title;
     el("detail-duration").textContent = formatDuration(w.durationMs);
@@ -141,7 +158,6 @@
 
   function renderCalendar() {
     const workoutDates = new Set(state.workouts.map((w) => w.isoDate));
-    const selected = state.workouts[state.selectedIdx];
     const firstDay = new Date(state.calYear, state.calMonth, 1);
     const startWeekday = firstDay.getDay();
     const daysInMonth = new Date(state.calYear, state.calMonth + 1, 0).getDate();
@@ -152,42 +168,15 @@
     for (let d = 1; d <= daysInMonth; d++) {
       const iso = state.calYear + "-" + pad2(state.calMonth + 1) + "-" + pad2(d);
       const hasWorkout = workoutDates.has(iso);
-      const isSelected = selected && iso === selected.isoDate;
-      html += `<div class="cal-cell${hasWorkout ? " has-workout" : ""}${isSelected ? " selected" : ""}" ${hasWorkout ? `data-iso="${iso}"` : ""}>
+      const isSelected = iso === state.selectedIso;
+      html += `<div class="cal-cell${hasWorkout ? " has-workout" : ""}${isSelected ? " selected" : ""}" data-iso="${iso}">
         <span>${d}</span>${hasWorkout ? '<div class="cal-dot"></div>' : ""}
       </div>`;
     }
     el("cal-grid").innerHTML = html;
     el("cal-grid").querySelectorAll("[data-iso]").forEach((node) => {
-      node.addEventListener("click", () => selectByIso(node.getAttribute("data-iso")));
+      node.addEventListener("click", () => selectIso(node.getAttribute("data-iso")));
     });
-
-    const sameDayEl = el("cal-sameday");
-    if (!selected) {
-      sameDayEl.style.display = "none";
-      return;
-    }
-    const sameDayIdx = state.workouts
-      .map((w, i) => i)
-      .filter((i) => state.workouts[i].isoDate === selected.isoDate);
-    if (sameDayIdx.length > 1) {
-      sameDayEl.style.display = "flex";
-      sameDayEl.innerHTML =
-        '<div class="cal-sameday-title">Logged that day</div>' +
-        sameDayIdx
-          .map(
-            (i) =>
-              `<button type="button" class="cal-sameday-btn${i === state.selectedIdx ? " selected" : ""}" data-idx="${i}">${escapeHtml(
-                state.workouts[i].title
-              )}</button>`
-          )
-          .join("");
-      sameDayEl.querySelectorAll("[data-idx]").forEach((node) => {
-        node.addEventListener("click", () => selectByIndex(Number(node.getAttribute("data-idx"))));
-      });
-    } else {
-      sameDayEl.style.display = "none";
-    }
   }
 
   function renderSplitsEditor(containerEl, splits, onLabelChange, onTimeChange, onRemove) {
@@ -237,8 +226,7 @@
   }
 
   function openAddModal() {
-    const selected = state.workouts[state.selectedIdx];
-    const iso = selected ? selected.isoDate : todayIso();
+    const iso = state.selectedIso || todayIso();
     state.addDraft = { isoDate: iso, title: "", duration: "", rpe: "", reps: "", weight: "", distance: "", notes: "" };
     state.addSplits = [];
     el("add-date-label").textContent = new Date(iso + "T00:00:00").toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric" });
@@ -260,7 +248,7 @@
   }
 
   function openEditModal() {
-    const w = state.workouts[state.selectedIdx];
+    const w = state.workouts.find((x) => x.id === state.selectedWorkoutId);
     if (!w) return;
     state.editDraft = w;
     state.editSplits = groupSiblings(w.isoDate, w.id).map((s) => ({ id: s.id, label: s.title, time: formatDuration(s.durationMs) }));
@@ -283,14 +271,15 @@
     state.editRemovedSplitIds = [];
   }
 
-  async function reloadWorkouts(keepIso) {
+  async function reloadWorkouts(selectIsoAfter, focusWorkoutId) {
     const { workouts } = await api("/api/workouts");
     state.workouts = workouts;
-    if (keepIso) {
-      const idx = state.workouts.findIndex((w) => w.isoDate === keepIso);
-      state.selectedIdx = idx >= 0 ? idx : 0;
-    } else if (state.selectedIdx >= state.workouts.length) {
-      state.selectedIdx = 0;
+    if (selectIsoAfter) state.selectedIso = selectIsoAfter;
+    const dayWorkouts = workoutsForIso(state.selectedIso);
+    if (focusWorkoutId != null && dayWorkouts.some((w) => w.id === focusWorkoutId)) {
+      state.selectedWorkoutId = focusWorkoutId;
+    } else {
+      state.selectedWorkoutId = dayWorkouts.length ? dayWorkouts[0].id : null;
     }
     render();
   }
@@ -322,7 +311,7 @@
       });
     }
     closeAddModal();
-    await reloadWorkouts(primary.workout.isoDate);
+    await reloadWorkouts(primary.workout.isoDate, primary.workout.id);
   }
 
   async function handleSaveEdit() {
@@ -356,8 +345,9 @@
       await api("/api/workouts/" + id, { method: "DELETE" });
     }
     const keepIso = w.isoDate;
+    const keepId = w.id;
     closeEditModal();
-    await reloadWorkouts(keepIso);
+    await reloadWorkouts(keepIso, keepId);
   }
 
   function render() {
@@ -407,12 +397,11 @@
     wireEvents();
     const { workouts } = await api("/api/workouts");
     state.workouts = workouts;
-    if (workouts.length > 0) {
-      const d = new Date(workouts[0].isoDate + "T00:00:00");
-      state.calYear = d.getFullYear();
-      state.calMonth = d.getMonth();
-    }
-    render();
+    const initialIso = workouts.length > 0 ? workouts[0].isoDate : todayIso();
+    const d = new Date(initialIso + "T00:00:00");
+    state.calYear = d.getFullYear();
+    state.calMonth = d.getMonth();
+    selectIso(initialIso);
   }
 
   init();

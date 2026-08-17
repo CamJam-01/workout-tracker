@@ -42,7 +42,11 @@ function sendProtected(page) {
     if (!getUserIdFromReq(req)) {
       return res.redirect("/login.html");
     }
-    res.sendFile(path.join(__dirname, "views", page));
+    // These pages change across deploys and are gated by auth, so never let
+    // the browser (or an intermediate cache) reuse a stale copy.
+    res.sendFile(path.join(__dirname, "views", page), {
+      headers: { "Cache-Control": "no-store" },
+    });
   };
 }
 

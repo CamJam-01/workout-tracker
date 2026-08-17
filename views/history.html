@@ -23,49 +23,57 @@
     <div class="history-grid">
       <div class="workout-list" id="workout-list"></div>
 
-      <div class="detail-card" id="detail-card" style="display:none;">
-        <div class="detail-header">
-          <div>
-            <div class="detail-date" id="detail-date"></div>
-            <div class="detail-title" id="detail-title"></div>
-          </div>
-          <div>
-            <div class="detail-duration" id="detail-duration"></div>
-            <div class="detail-duration-label">duration</div>
-          </div>
+      <div class="detail-card" id="detail-card">
+        <div class="detail-empty" id="detail-empty" style="display:none;">
+          <div class="detail-date" id="detail-empty-date"></div>
+          <div class="detail-empty-title">No workouts logged</div>
+          <p class="detail-empty-sub">Nothing recorded for this day yet.</p>
         </div>
 
-        <button type="button" class="detail-edit-btn" id="detail-edit-btn" aria-label="Edit workout">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
-        </button>
+        <div class="detail-content" id="detail-content" style="display:none;">
+          <div class="detail-header">
+            <div>
+              <div class="detail-date" id="detail-date"></div>
+              <div class="detail-title" id="detail-title"></div>
+            </div>
+            <div>
+              <div class="detail-duration" id="detail-duration"></div>
+              <div class="detail-duration-label">duration</div>
+            </div>
+          </div>
 
-        <div class="detail-stats">
-          <div>
-            <div class="detail-stat-label">Reps &amp; sets</div>
-            <div class="detail-stat-val" id="detail-reps"></div>
-          </div>
-          <div>
-            <div class="detail-stat-label">Weight</div>
-            <div class="detail-stat-val" id="detail-weight"></div>
-          </div>
-          <div>
-            <div class="detail-stat-label">Distance</div>
-            <div class="detail-stat-val" id="detail-distance"></div>
-          </div>
-          <div>
-            <div class="detail-stat-label">Effort (RPE)</div>
-            <div class="detail-stat-val" id="detail-rpe"></div>
-          </div>
-        </div>
+          <button type="button" class="detail-edit-btn" id="detail-edit-btn" aria-label="Edit workout">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
+          </button>
 
-        <div id="detail-splits" style="display:none;">
-          <div class="detail-stat-label">Splits</div>
-          <div class="laps-row" id="detail-splits-row" style="display:flex;"></div>
-        </div>
+          <div class="detail-stats">
+            <div>
+              <div class="detail-stat-label">Reps &amp; sets</div>
+              <div class="detail-stat-val" id="detail-reps"></div>
+            </div>
+            <div>
+              <div class="detail-stat-label">Weight</div>
+              <div class="detail-stat-val" id="detail-weight"></div>
+            </div>
+            <div>
+              <div class="detail-stat-label">Distance</div>
+              <div class="detail-stat-val" id="detail-distance"></div>
+            </div>
+            <div>
+              <div class="detail-stat-label">Effort (RPE)</div>
+              <div class="detail-stat-val" id="detail-rpe"></div>
+            </div>
+          </div>
 
-        <div>
-          <div class="detail-notes-label">Notes</div>
-          <p class="detail-notes" id="detail-notes"></p>
+          <div id="detail-splits" style="display:none;">
+            <div class="detail-stat-label">Splits</div>
+            <div class="laps-row" id="detail-splits-row" style="display:flex;"></div>
+          </div>
+
+          <div>
+            <div class="detail-notes-label">Notes</div>
+            <p class="detail-notes" id="detail-notes"></p>
+          </div>
         </div>
       </div>
 
@@ -80,7 +88,6 @@
         </div>
         <div class="cal-grid" id="cal-grid"></div>
         <button type="button" class="cal-add-btn" id="cal-add-btn">+ Add workout</button>
-        <div class="cal-sameday" id="cal-sameday" style="display:none;"></div>
       </div>
     </div>
   </div>

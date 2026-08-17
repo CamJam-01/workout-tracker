@@ -181,7 +181,11 @@ a:hover { color: var(--color-accent-700); }
 .workout-item-meta { display: flex; gap: 10px; font-size: 12px; color: color-mix(in srgb, var(--color-text) 60%, transparent); }
 .empty-note { font-size: 13px; color: color-mix(in srgb, var(--color-text) 55%, transparent); padding: 16px 4px; }
 
-.detail-card { position: relative; background: var(--color-surface); border-radius: calc(var(--radius-lg) * 1.15); padding: 32px; box-shadow: var(--shadow-md); display: flex; flex-direction: column; gap: 18px; }
+.detail-card { position: relative; background: var(--color-surface); border-radius: calc(var(--radius-lg) * 1.15); padding: 32px; box-shadow: var(--shadow-md); }
+.detail-content { display: flex; flex-direction: column; gap: 18px; }
+.detail-empty { display: flex; flex-direction: column; gap: 6px; }
+.detail-empty-title { font-family: var(--font-heading); font-size: 22px; }
+.detail-empty-sub { font-size: 14px; line-height: 1.6; margin: 6px 0 0; color: color-mix(in srgb, var(--color-text) 60%, transparent); }
 .detail-edit-btn { cursor: pointer; position: absolute; right: 20px; bottom: 20px; width: 38px; height: 38px; border-radius: 999px; border: none; background: var(--color-accent); color: var(--color-bg); display: flex; align-items: center; justify-content: center; padding: 0; box-shadow: var(--shadow-md); }
 .detail-header { display: flex; justify-content: space-between; align-items: flex-start; }
 .detail-date { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); margin-bottom: 4px; }
@@ -201,14 +205,11 @@ a:hover { color: var(--color-accent-700); }
 .cal-weekdays, .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
 .cal-weekdays { font-size: 10px; text-align: center; color: color-mix(in srgb, var(--color-text) 55%, transparent); }
 .cal-cell { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; font-size: 12px; position: relative; }
-.cal-cell.has-workout { cursor: pointer; background: var(--color-accent-100); }
+.cal-cell[data-iso] { cursor: pointer; }
+.cal-cell.has-workout { background: var(--color-accent-100); }
 .cal-cell.selected { background: var(--color-accent); color: var(--color-bg); }
 .cal-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--color-accent); position: absolute; bottom: 5px; }
 .cal-cell.selected .cal-dot { background: var(--color-bg); }
-.cal-sameday { display: flex; flex-direction: column; gap: 6px; padding-top: 10px; border-top: 1px solid var(--color-divider); }
-.cal-sameday-title { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 55%, transparent); }
-.cal-sameday-btn { cursor: pointer; text-align: left; border: none; background: transparent; color: var(--color-text); font-size: 12px; padding: 8px 10px; border-radius: 10px; }
-.cal-sameday-btn.selected { background: var(--color-accent-2-200); }
 .cal-add-btn { cursor: pointer; font-family: var(--font-heading); font-size: 13px; background: var(--color-accent); color: var(--color-bg); border: none; padding: 9px 14px; border-radius: 999px; }
 
 .splits-editor { display: flex; flex-direction: column; gap: 8px; }
