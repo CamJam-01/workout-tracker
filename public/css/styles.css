@@ -5,9 +5,12 @@
   --color-bg: #f5ead8;
   --color-surface: #ebddc5;
   --color-text: #201e1d;
+  --color-text-rgb: 32, 30, 29;
   --color-accent: #c67139;
+  --color-accent-rgb: 198, 113, 57;
   --color-accent-2: #7a8a5e;
-  --color-divider: color-mix(in srgb, #201e1d 16%, transparent);
+  --color-neutral-900-rgb: 46, 43, 37;
+  --color-divider: rgba(var(--color-text-rgb), 0.16);
 
   /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
      same step of any role matches the others in visual value. */
@@ -58,9 +61,9 @@
 
   /* Elevation — derived from the ground: soft ink-tinted shadows on a
      light theme, a hairline edge + ambient darkness on a dark one. */
-  --shadow-sm: 0 1px 2px color-mix(in srgb, #2e2b25 14%, transparent);
-  --shadow-md: 0 3px 10px color-mix(in srgb, #2e2b25 16%, transparent);
-  --shadow-lg: 0 12px 32px color-mix(in srgb, #2e2b25 22%, transparent);
+  --shadow-sm: 0 1px 2px rgba(var(--color-neutral-900-rgb), 0.14);
+  --shadow-md: 0 3px 10px rgba(var(--color-neutral-900-rgb), 0.16);
+  --shadow-lg: 0 12px 32px rgba(var(--color-neutral-900-rgb), 0.22);
 }
 
 body {
@@ -97,12 +100,12 @@ img { display: block; max-width: 100%; }
 figure { margin: 0; }
 figcaption {
   font-size: 11px; margin-top: var(--space-1);
-  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+  color: rgba(var(--color-text-rgb), 0.55);
 }
-.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+.text-muted { color: rgba(var(--color-text-rgb), 0.55); }
 :focus { outline: none; }
 :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
-::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+::selection { background: rgba(var(--color-accent-rgb), 0.3); }
 
 /* — rules — */
 .hr {
@@ -127,18 +130,18 @@ figcaption {
 .btn-primary:hover { background: var(--color-accent-600); }
 .btn-primary:active { background: var(--color-accent-700); }
 .btn-secondary { border-color: var(--color-divider); }
-.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
-.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.btn-secondary:hover { background: rgba(var(--color-text-rgb), 0.07); }
+.btn-secondary:active { background: rgba(var(--color-text-rgb), 0.14); }
 .btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
-.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
-.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-ghost:hover { background: rgba(var(--color-accent-rgb), 0.1); }
+.btn-ghost:active { background: rgba(var(--color-accent-rgb), 0.18); }
 .btn-icon { width: 36px; height: 36px; padding: 0; }
 .btn-block { width: 100%; margin-top: var(--space-2); }
 
 /* — forms — */
 .field > label {
   display: block; font-size: 12px; margin-bottom: 5px;
-  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+  color: rgba(var(--color-text-rgb), 0.7);
 }
 .input {
   width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
@@ -146,7 +149,7 @@ figcaption {
   background: var(--color-surface);
   border: 1px solid var(--color-divider); border-radius: var(--radius-md);
 }
-.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:hover { border-color: rgba(var(--color-text-rgb), 0.45); }
 .input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
 textarea.input { min-height: 90px; resize: vertical; }
 .radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
@@ -173,7 +176,7 @@ textarea.input { min-height: 90px; resize: vertical; }
 }
 .seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
 .seg-opt:has(input:checked) { background: var(--color-accent); color: var(--color-bg); }
-.seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.seg-opt:not(:has(input:checked)):hover { background: rgba(var(--color-text-rgb), 0.07); }
 .seg-opt:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: -2px; }
 
 /* — cards — */
@@ -189,7 +192,7 @@ textarea.input { min-height: 90px; resize: vertical; }
 .card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
 .card-meta {
   display: flex; align-items: center; gap: 6px; font-size: 11px;
-  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+  color: rgba(var(--color-text-rgb), 0.5);
 }
 .elev-sm { box-shadow: var(--shadow-sm); }
 .elev-md { box-shadow: var(--shadow-md); }
@@ -223,20 +226,20 @@ textarea.input { min-height: 90px; resize: vertical; }
 .table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .table th {
   text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  color: rgba(var(--color-text-rgb), 0.6);
   padding: var(--space-2); border-bottom: 1px solid var(--color-divider);
 }
 .table td {
   padding: var(--space-2);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);
+  border-bottom: 1px solid rgba(var(--color-text-rgb), 0.08);
 }
-.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+.table tbody tr:hover { background: rgba(var(--color-text-rgb), 0.04); }
 
 /* — dialog — */
 .dialog-backdrop {
   position: fixed; inset: 0; display: grid; place-items: center;
   padding: var(--space-4);
-  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+  background: rgba(var(--color-neutral-900-rgb), 0.5);
 }
 .dialog {
   width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
