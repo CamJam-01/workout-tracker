@@ -1,44 +1,42 @@
 (function () {
-  function setNameField(root, name) {
-    var input = root.querySelector("#submitter-name");
-    if (input && !input.value) {
-      input.value = name;
-      input.dispatchEvent(new Event("input", { bubbles: true }));
-    }
-    return !!input;
-  }
+  var LOADER_ID = "feedback-widget-loader";
 
-  function attach(shadowRoot, name) {
-    if (setNameField(shadowRoot, name)) return;
-    var observer = new MutationObserver(function () {
-      if (setNameField(shadowRoot, name)) observer.disconnect();
-    });
-    observer.observe(shadowRoot, { childList: true, subtree: true });
-  }
-
-  function watchForWidget(name) {
-    var existing = document.querySelector("[data-feedback-widget]");
-    if (existing && existing.shadowRoot) {
-      attach(existing.shadowRoot, name);
-      return;
-    }
-    // The widget's host element is appended to <body> asynchronously by the
-    // loader script, so wait for it before we can reach into its shadow root.
-    var bodyObserver = new MutationObserver(function () {
-      var host = document.querySelector("[data-feedback-widget]");
-      if (host && host.shadowRoot) {
-        bodyObserver.disconnect();
-        attach(host.shadowRoot, name);
+  // The widget script is async, so window.ClientFeedback may not exist yet when
+  // this runs; wait for the loader's load event before touching the API.
+  function widgetReady() {
+    return new Promise(function (resolve, reject) {
+      if (window.ClientFeedback) {
+        resolve();
+        return;
       }
+      var loader = document.getElementById(LOADER_ID);
+      if (!loader) {
+        reject();
+        return;
+      }
+      loader.addEventListener("load", function () {
+        if (window.ClientFeedback) {
+          resolve();
+        } else {
+          reject();
+        }
+      }, { once: true });
+      loader.addEventListener("error", reject, { once: true });
+    }).then(function () {
+      return window.ClientFeedback.ready();
     });
-    bodyObserver.observe(document.documentElement, { childList: true, subtree: true });
   }
 
-  fetch("/api/me", { headers: { "Content-Type": "application/json" } })
-    .then(function (res) { return res.ok ? res.json() : null; })
-    .then(function (data) {
-      var name = data && data.user && data.user.name;
-      if (name) watchForWidget(name);
+  function currentUserName() {
+    return fetch("/api/me", { headers: { "Content-Type": "application/json" } })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (data) { return data && data.user && data.user.name; });
+  }
+
+  Promise.all([widgetReady(), currentUserName()])
+    .then(function (results) {
+      var name = results[1];
+      if (name) window.ClientFeedback.prefill({ name: name });
     })
     .catch(function () {});
 })();
